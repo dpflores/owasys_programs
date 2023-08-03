@@ -58,7 +58,7 @@ int InitRTUModule( void )
       WriteLog("Error %d in RTUControl_Start()", ReturnCode);
       return -1;
   	}
-   WriteLog("RTU-> Module initialized & started", ReturnCode);
+   // WriteLog("RTU-> Module initialized & started", ReturnCode);
    return NO_ERROR;
 }
 

@@ -58,7 +58,7 @@ int InitIOModule( void )
 		IO_Finalize();
 		return -1;
    }
-   WriteLog("IOs-> Module initialized & started");
+   // WriteLog("IOs-> Module initialized & started");
    return NO_ERROR;
 }
 
