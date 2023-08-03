@@ -52,6 +52,8 @@
 #include "owa4x/owerrors.h"
 
 // To use time library of C
+#include <time.h>
+
 #include <stdlib.h>
 //-----------------------------------------------------------------//
 //Defines
@@ -101,6 +103,18 @@ FILE *logfd = NULL;
 
 /* functions definition */
 
+void delay(int number_of_seconds)
+{
+    // Converting time into milli_seconds
+    int milli_seconds = 1000 * number_of_seconds;
+ 
+    // Storing start time
+    clock_t start_time = clock();
+ 
+    // looping till required time is not achieved
+    while (clock() < start_time + milli_seconds);
+}
+
 //-----------------------------------------------------------------//
 // Function: GetGPSPosition()
 // Input Params:  -
@@ -110,15 +124,6 @@ FILE *logfd = NULL;
 //    If position fix is not valid the corresponding tag is set to FALSE.
 //-----------------------------------------------------------------//
 
-void delay_milli(int milli_seconds)
-{
-    // Storing start time
-    clock_t start_time = clock();
- 
-    // looping till required time is not achieved
-    while (clock() < start_time + milli_seconds);
-}
- 
 
 void GetGPSPosition( void )
 {
@@ -929,7 +934,7 @@ int main(int argc, char *argv[])
    SetMeasRate();
    while(1) {
       GetFullGPSPosition();
-      delay(500);
+      delay(0.5);
    }
 
 
