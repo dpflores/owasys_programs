@@ -174,7 +174,7 @@ int main( int argc, char *argv[] )
 
       }
 
-      delay(10);
+      delay(100);
 
    }
      
