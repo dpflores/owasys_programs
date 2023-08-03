@@ -1,0 +1,3 @@
+v0.0.1          2018-01-08 first version
+v0.0.2          2018-01-16 help modified
+v0.0.3          2020-05-04 get dop command corrected
