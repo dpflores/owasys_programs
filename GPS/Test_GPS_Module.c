@@ -722,13 +722,7 @@ void SetANA( void )
 void SetMeasRate( void )
 {
    int   ReturnCode = 0;
-   char  rate = 0;
-   char  strEntry[255];
-
-   printf( "Measurement rate ( 1, 2, 4) >> ");
-   memset( ( void *) &strEntry, 0, sizeof( strEntry));
-   getEntry( strEntry);
-   rate = atoi( strEntry);
+   char  rate = "2";
    if( (ReturnCode = GPS_SetMeasurementRate(rate)) != NO_ERROR) {
       printf( "Error %d in Set Rate()...\n", ReturnCode);
    } else {
@@ -933,7 +927,7 @@ int main(int argc, char *argv[])
    SetGpsLed();
    SetMeasRate();
    while(1) {
-      delay(1000);
+      delay(500);
       GetFullGPSPosition();
       
    }
