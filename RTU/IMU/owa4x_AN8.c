@@ -169,11 +169,11 @@ int main( int argc, char *argv[] )
          printf("ERROR %d in getting MOVEMENT SENSOR\n", ReturnCode);
       } 
       else {
-         printf("{\"scale\": %d, \"x_axis\": %.3f, \"y_axis\": %.3f, \"z_axis\": %.3f}", MoveValue.scale, MoveValue.x_axis, MoveValue.y_axis, MoveValue.z_axis);
+         printf("{\"scale\": %d, \"x_axis\": %.3f, \"y_axis\": %.3f, \"z_axis\": %.3f}\n", MoveValue.scale, MoveValue.x_axis, MoveValue.y_axis, MoveValue.z_axis);
       }
 
       delay(100);
-      
+
    }
      
 
