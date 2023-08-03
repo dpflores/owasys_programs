@@ -726,7 +726,7 @@ void SetMeasRate( void )
    if( (ReturnCode = GPS_SetMeasurementRate(rate)) != NO_ERROR) {
       printf( "Error %d in Set Rate()...\n", ReturnCode);
    } else {
-      printf( "Set Rate OK\n");
+      // printf( "Set Rate OK\n");
    }
 }
 
@@ -912,7 +912,7 @@ int main(int argc, char *argv[])
 {
 	int  					ReturnCode = 0;
 
-   printf( " OWASYS -> Starting Test_GPS_Module %s (%s, %s)\n", APP_VERSION, __DATE__ , __TIME__);
+   // printf( " OWASYS -> Starting Test_GPS_Module %s (%s, %s)\n", APP_VERSION, __DATE__ , __TIME__);
 
    if (InitRTUModule() != NO_ERROR)
       exit(EXIT_FAILURE);
@@ -1071,7 +1071,7 @@ void SetGpsLed( void)
 {
 
    GPS_Set_Led_Mode(0);
-   printf(" Set led to GPS mode");
+   // printf(" Set led to GPS mode");
    
 }
 
