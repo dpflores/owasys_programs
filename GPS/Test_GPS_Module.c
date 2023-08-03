@@ -786,120 +786,6 @@ void GetModel( void )
    }  
 }
 
-//-----------------------------------------------------------------//
-// Function: handleKeys()
-// Input Params:
-//               buffer with the entered chars.
-// Output Params:
-//               0 - success
-//              -1 - error
-// Description:
-//    Checks if the entered characters fit with one the possible
-//    commands.
-//-----------------------------------------------------------------//
-int handleKeys( char* buffer )
-{
-   int   retVal=0, index;
-
-   for (index=0; buffer[index] != '\0'; index++) {
-      if (buffer[ index] > '1') {
-         buffer[index] = tolower( buffer[index]);
-      }
-   }
-   if( strncmp(buffer, CMD_GET_FULL_POSITION, strlen(CMD_GET_FULL_POSITION)) == 0) {
-      GetFullGPSPosition();
-   } else if( strncmp(buffer, CMD_GET_POSITION, strlen(CMD_GET_POSITION)) == 0) {
-      GetGPSPosition();
-   }
-   else if( strncmp(buffer, CMD_GET_SPEED, strlen(CMD_GET_SPEED)) == 0) {
-      GetGPSSpeed();
-   }
-   else if( strncmp(buffer, CMD_GET_ANTENNA, strlen(CMD_GET_ANTENNA)) == 0) {
-      GetAntennaStatus();
-   }
-   else if( strncmp(buffer, CMD_GET_JAMMING, strlen(CMD_GET_JAMMING)) == 0) {
-      GetStatusJamming();
-   }
-   else if( strncmp(buffer, CMD_GET_VERSION, strlen(CMD_GET_VERSION)) == 0) {
-      GetSwVersion();
-   }
-   else if( strncmp(buffer, CMD_GET_UTC, strlen(CMD_GET_UTC)) == 0) {
-      GetUTCDateTime();
-   }
-   else if( strncmp(buffer, CMD_GET_DOP, strlen(CMD_GET_DOP)) == 0) {
-      GetDOP_FixMode();
-   }
-   else if( strncmp(buffer, CMD_GET_SV_VIEW, strlen(CMD_GET_SV_VIEW)) == 0) {
-      GetSV_inView();
-   }
-   else if( strncmp(buffer, CMD_GET_ECEF, strlen(CMD_GET_ECEF)) == 0) {
-      GetECEFCoordinates();
-   }
-   else if( strncmp(buffer, CMD_GET_GEODETIC, strlen(CMD_GET_GEODETIC)) == 0) {
-      GetGeodeticCoordinates();
-   }
-   else if( strncmp(buffer, CMD_SET_ADQUISITION_MODE, strlen(CMD_SET_ADQUISITION_MODE)) == 0) {
-      SetAdquisitionMode();
-   }
-   else if( strncmp(buffer, CMD_SET_DYNAMIC_MODEL, strlen(CMD_SET_DYNAMIC_MODEL)) == 0) {
-      SetDynamicModel();
-   }
-   else if( strncmp(buffer, CMD_SET_STATIC_THRESH, strlen(CMD_SET_STATIC_THRESH)) == 0) {
-      SetStaticThreshold();
-   }
-   else if( strncmp(buffer, CMD_GPS_FINALIZE, strlen(CMD_GPS_FINALIZE)) == 0) {
-      retVal = EndGPSModule();
-   }
-   else if( strncmp(buffer, CMD_GPS_START, strlen(CMD_GPS_START)) == 0) {
-      retVal = InitGPSModule();
-   }
-   else if( strncmp(buffer, CMD_SET_ITFM_MODE, strlen(CMD_SET_ITFM_MODE)) == 0) {
-      EnableITFMMode();
-   }
-   else if( strncmp(buffer, CMD_SEND_DGPS, strlen(CMD_SEND_DGPS)) == 0) {
-      SendDGPSMsg();
-   }
-   else if( strncmp(buffer, CMD_GET_NAV_CONFIG, strlen(CMD_GET_NAV_CONFIG)) == 0) {
-      GetNAVConfiguration();
-   }
-   else if( strncmp(buffer, CMD_SET_NAV_CONFIG, strlen(CMD_SET_NAV_CONFIG)) == 0) {
-      SetNAVConfiguration();
-   }
-   else if( strncmp(buffer, CMD_GET_NAVX5, strlen(CMD_GET_NAVX5)) == 0) {
-      GetNavx5();
-   }
-   else if( strncmp(buffer, CMD_SET_ANA, strlen(CMD_SET_ANA)) == 0) {
-      SetANA();
-   }
-   else if( strncmp(buffer, CMD_CFG_FIX, strlen(CMD_CFG_FIX)) == 0) {
-      SetFixConfiguration();
-   }
-   else if( strncmp(buffer, CMD_GET_FIX, strlen(CMD_GET_FIX)) == 0) {
-      GetFixConfiguration();
-   }
-   else if( strncmp(buffer, CMD_GET_MODEL, strlen(CMD_GET_MODEL)) == 0) {
-      GetModel();
-   }
-   else if( strncmp(buffer, CMD_SET_RATE, strlen(CMD_SET_RATE)) == 0) {
-      SetMeasRate();
-   }
-   else if( strncmp(buffer, CMD_GET_RATE, strlen(CMD_GET_RATE)) == 0) {
-      GetMeasRate();
-   }
-   else if( strncmp(buffer, CMD_GET_NAV_SOL, strlen(CMD_GET_NAV_SOL)) == 0) {
-      Get_NavSol();
-   }
-   else if( strncmp(buffer, CMD_GPS_LED, strlen(CMD_GPS_LED)) == 0) {
-      SetGpsLed();
-   }
-   else if( strncmp(buffer, CMD_LIB_VER, strlen(CMD_LIB_VER)) == 0) {
-      GetLibVersion();
-   }
-	if( strncmp(buffer, CMD_QUIT, strlen(CMD_QUIT)) == 0) {
-      return -1;
-   }
-   return retVal;
-}
 
 
 //-----------------------------------------------------------------//
@@ -926,6 +812,8 @@ int main(int argc, char *argv[])
 
    SetGpsLed();
    SetMeasRate();
+
+   
    while(1) {
       delay(500);
       GetFullGPSPosition();
