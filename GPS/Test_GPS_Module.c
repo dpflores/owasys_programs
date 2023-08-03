@@ -53,7 +53,7 @@
 
 // To use time library of C
 #include <time.h>
-
+#include <unistd.h>
 //-----------------------------------------------------------------//
 //Defines
 //-----------------------------------------------------------------//
@@ -930,7 +930,7 @@ int main(int argc, char *argv[])
    SetMeasRate();
    while(1) {
       GetFullGPSPosition();
-      delay_milli(1000);
+      sleep(0.5);
    }
 
 
