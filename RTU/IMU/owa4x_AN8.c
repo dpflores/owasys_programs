@@ -131,6 +131,11 @@ int main( int argc, char *argv[] )
     }
       
    
+   ReturnCode = RTU_RemoveMovementSensor();
+   if( ReturnCode) {
+      printf("ERROR %d in removing MOVE\n", ReturnCode);
+   } 
+   
    ReturnCode = RTU_CfgMovementSensor(Range, Threshold, Time, (void (*)(move_int_t))&MoveIntHandler);
    if( ReturnCode) {
       printf("ERROR %d in config Acelerometer\n", ReturnCode);
