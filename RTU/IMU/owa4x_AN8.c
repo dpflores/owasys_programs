@@ -172,7 +172,7 @@ int main( int argc, char *argv[] )
          printf("{\"scale\": %d, \"x_axis\": %.3f, \"y_axis\": %.3f, \"z_axis\": %.3f}\n", MoveValue.scale, MoveValue.x_axis, MoveValue.y_axis, MoveValue.z_axis);
       }
 
-      delay(100);
+      delay(10);
 
    }
      
