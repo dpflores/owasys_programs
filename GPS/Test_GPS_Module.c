@@ -722,7 +722,7 @@ void SetANA( void )
 void SetMeasRate( void )
 {
    int   ReturnCode = 0;
-   char  rate = '2';
+   char  rate = 2;
    if( (ReturnCode = GPS_SetMeasurementRate(rate)) != NO_ERROR) {
       printf( "Error %d in Set Rate()...\n", ReturnCode);
    } else {
