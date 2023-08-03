@@ -63,6 +63,21 @@ static unsigned long GetULValue(void);
 static void MoveIntHandler( move_int_t wMoveState);
 static void GetWakeUpreason( void);
 
+void delay(int number_of_seconds);
+
+
+void delay(int number_of_seconds)
+{
+    // Converting time into milli_seconds
+    int milli_seconds = 1000 * number_of_seconds;
+ 
+    // Storing start time
+    clock_t start_time = clock();
+ 
+    // looping till required time is not achieved
+    while (clock() < start_time + milli_seconds);
+}
+
 void getEntry( unsigned char* strEntry)
 {
    char c = 0;
@@ -120,6 +135,8 @@ int main( int argc, char *argv[] )
 
    unsigned char Range = 0, Threshold = 10, Time = 10;
 
+   // printf("Enter acceleration type (0: filtered, 1: raw):");
+   unsigned char accel_type = 0;
 
     if( (ReturnCode = RTUControl_Initialize(NULL)) != NO_ERROR) {
       printf("Error %d in RTUControl_Initialize()...\n", ReturnCode);
@@ -143,31 +160,20 @@ int main( int argc, char *argv[] )
 
    while (1)
    {
-      char AccelType;
-
-      printf("Enter acceleration type (0: filtered, 1: raw):");
-      AccelType = (char) GetULValue();
-
-      if( AccelType == 0) {
+      if( accel_type == 0) {
                ReturnCode = RTU_GetMovementSensor( &MoveValue);
       } else {
                ReturnCode = RTU_GetRawAcceleration( &MoveValue);
       }
       if( ReturnCode) {
          printf("ERROR %d in getting MOVEMENT SENSOR\n", ReturnCode);
-      } else {
-            printf("Movement Sensor: Scale(");
-            if( MoveValue.scale == 0) {
-                  printf("+-2g");
-            } else if( MoveValue.scale == 1) {
-                  printf("+-4g");
-            } else if( MoveValue.scale == 2) {
-                  printf("+-8g");
-            } else {
-                  printf("+-16g");
-            }
-            printf("), X(%.3fg), Y(%.3fg), Z(%.3fg)\r\n", MoveValue.x_axis, MoveValue.y_axis, MoveValue.z_axis);
+      } 
+      else {
+         printf("{\"scale\": %d, \"x_axis\": %.3f, \"y_axis\": %.3f, \"z_axis\": %.3f}", MoveValue.scale, MoveValue.x_axis, MoveValue.y_axis, MoveValue.z_axis);
       }
+
+      delay(100);
+      
    }
      
 
