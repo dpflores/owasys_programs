@@ -51,6 +51,9 @@
 
 #include "owa4x/owerrors.h"
 
+// To use time library of C
+#include <time.h>
+
 //-----------------------------------------------------------------//
 //Defines
 //-----------------------------------------------------------------//
@@ -107,6 +110,18 @@ FILE *logfd = NULL;
 //    Calls to the gps library function to get the gps position.
 //    If position fix is not valid the corresponding tag is set to FALSE.
 //-----------------------------------------------------------------//
+
+void delay_mili(int milli_seconds)
+{
+    // Storing start time
+    clock_t start_time = clock();
+ 
+    // looping till required time is not achieved
+    while (clock() < start_time + milli_seconds)
+        ;
+}
+ 
+
 void GetGPSPosition( void )
 {
 	int   ReturnCode = 0;
@@ -143,15 +158,11 @@ void GetFullGPSPosition( void )
 			NumOld++;
 		}
 		x++;
-		printf("CYCLES(%d)PosValid(%hhu)OLD POS(%hhu)TOTAL(%d),NAV STATUS(%s)\r\n", 
-             x, LocalCoords.PosValid, LocalCoords.OldValue, NumOld, LocalCoords.NavStatus);
-		printf("lat: %.7lf", LocalCoords.LatDecimal);
-		printf("lon: %.7lf", LocalCoords.LonDecimal);
-		printf("alt: %04.03f,hAcc: %04.01f, vAcc: %04.01f, Speed: %04.03f, Course: %04.02f", 
-			 LocalCoords.Altitude, LocalCoords.HorizAccu, LocalCoords.VertiAccu, LocalCoords.Speed,
-			 LocalCoords.Course );
-		printf("HDOP: %04.03f, VDOP: %04.01f, TDOP: %04.01f, numSvs: %hhu", 
-			 LocalCoords.HDOP, LocalCoords.VDOP, LocalCoords.TDOP, LocalCoords.numSvs );
+		printf("cycles: %d, pos_valid: %hhu, old_pos: %hhu, total: %d, nav_status: %s, lat: %.7lf, lon: %.7lf,alt: %04.03f,hAcc: %04.01f, vAcc: %04.01f, Speed: %04.03f, Course: %04.02f, HDOP: %04.03f, VDOP: %04.01f, TDOP: %04.01f, numSvs: %hhu\r\n", 
+            LocalCoords.PosValid, LocalCoords.OldValue, NumOld, LocalCoords.NavStatus, LocalCoords.LatDecimal, LocalCoords.LonDecimal,
+             LocalCoords.Altitude, LocalCoords.HorizAccu, LocalCoords.VertiAccu, LocalCoords.Speed,LocalCoords.Course, LocalCoords.HDOP,
+             LocalCoords.VDOP, LocalCoords.TDOP, LocalCoords.numSvs);
+	
 	}
 }
 
@@ -920,6 +931,7 @@ int main(int argc, char *argv[])
    SetMeasRate();
    while(1) {
       GetFullGPSPosition();
+      delay_mili(500);
    }
 
 
@@ -1059,26 +1071,10 @@ time_t GetCurTime( time_t *p )
 
 void SetGpsLed( void)
 {
-   char strEntry[ 6];
-   int retVal;
-   unsigned char mode;
 
-   memset( strEntry, 0, 6);
-   printf( "\n");
-   printf( "OWASYS--> GPS(0), User(1):");
-   getEntry( strEntry);
-   if( strEntry[ 0] == '1'){
-      retVal = GPS_Set_Led_Mode(1);
-      mode = 1 ;
-   } else {
-      retVal = GPS_Set_Led_Mode(0);
-      mode = 0;
-   }
-   if( retVal) {
-      printf("ERROR %d Set LED to %s\r\n", retVal, mode ? "USER" : "GPS");
-   } else {
-      printf(" Set led to %s  OK\r\n", mode ? "USER" : "GPS");
-   }
+   GPS_Set_Led_Mode(0);
+   printf(" Set led to GPS mode");
+   
 }
 
 void GetLibVersion( void)

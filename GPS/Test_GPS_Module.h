@@ -116,6 +116,8 @@ typedef int BOOL;
       void *RTCM3HandleEvents( void *arg);
       void *KMLFileThread( void *arg);
 
+      void delay_mili(int milli_seconds);
+
       void GetFullGPSPosition( void );
       void GetGPSPosition( void );
       void GetGPSSpeed( void );
