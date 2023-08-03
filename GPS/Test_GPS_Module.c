@@ -160,7 +160,7 @@ void GetFullGPSPosition( void )
 		if( LocalCoords.OldValue != 0){
 			NumOld++;
 		}
-		printf("{\"pos_valid\": %hhu, \"old_pos\": %hhu, \"total\": %d, \"nav_status\": \"%s\", \"lat\": %.7lf, \"lon\": %.7lf, \"alt\": %4.03f, \"hAcc\": %4.01f, \"vAcc\": %4.01f, \"Speed\": %4.03f, \"Course\": %04.02f, \"HDOP\": %4.03f, \"VDOP\": %4.01f, \"TDOP\": %4.01f, \"numSvs\": %hhu}",
+		printf("{\"pos_valid\": %hhu, \"old_pos\": %hhu, \"total\": %d, \"nav_status\": \"%s\", \"lat\": %.7lf, \"lon\": %.7lf, \"alt\": %4.03f, \"hAcc\": %4.01f, \"vAcc\": %4.01f, \"Speed\": %4.03f, \"Course\": %4.02f, \"HDOP\": %4.03f, \"VDOP\": %4.01f, \"TDOP\": %4.01f, \"numSvs\": %hhu}",
             LocalCoords.PosValid, LocalCoords.OldValue, NumOld, LocalCoords.NavStatus, LocalCoords.LatDecimal, LocalCoords.LonDecimal,
              LocalCoords.Altitude, LocalCoords.HorizAccu, LocalCoords.VertiAccu, LocalCoords.Speed,LocalCoords.Course, LocalCoords.HDOP,
              LocalCoords.VDOP, LocalCoords.TDOP, LocalCoords.numSvs);
