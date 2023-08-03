@@ -52,8 +52,7 @@
 #include "owa4x/owerrors.h"
 
 // To use time library of C
-#include <time.h>
-#include <unistd.h>
+#include <stdlib.h>
 //-----------------------------------------------------------------//
 //Defines
 //-----------------------------------------------------------------//
@@ -930,7 +929,7 @@ int main(int argc, char *argv[])
    SetMeasRate();
    while(1) {
       GetFullGPSPosition();
-      sleep(0.5);
+      delay(500);
    }
 
 
