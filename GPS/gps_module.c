@@ -81,8 +81,8 @@ int InitGPSModule( void )
       }
    }
 	GPS_IsActive( &IsActive);
-	printf("IS ACTIVE(%d)\r\n", IsActive);
-   WriteLog("GPS-> Module initialized & started");
+	// printf("IS ACTIVE(%d)\r\n", IsActive);
+   // WriteLog("GPS-> Module initialized & started");
    return NO_ERROR;
 }
 
