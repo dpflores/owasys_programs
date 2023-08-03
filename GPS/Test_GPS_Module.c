@@ -111,14 +111,13 @@ FILE *logfd = NULL;
 //    If position fix is not valid the corresponding tag is set to FALSE.
 //-----------------------------------------------------------------//
 
-void delay_mili(int milli_seconds)
+void delay_milli(int milli_seconds)
 {
     // Storing start time
     clock_t start_time = clock();
  
     // looping till required time is not achieved
-    while (clock() < start_time + milli_seconds)
-        ;
+    while (clock() < start_time + milli_seconds);
 }
  
 
@@ -931,7 +930,7 @@ int main(int argc, char *argv[])
    SetMeasRate();
    while(1) {
       GetFullGPSPosition();
-      delay_mili(500);
+      delay_milli(1000);
    }
 
 
