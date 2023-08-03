@@ -145,22 +145,12 @@ void GetFullGPSPosition( void )
 		x++;
 		printf("CYCLES(%d)PosValid(%hhu)OLD POS(%hhu)TOTAL(%d),NAV STATUS(%s)\r\n", 
              x, LocalCoords.PosValid, LocalCoords.OldValue, NumOld, LocalCoords.NavStatus);
-/*		printf("LATITUDE  --> %02d degrees %02d minutes %04.04f seconds %c (%lf)\r\n",
-				LocalCoords.Latitude.Degrees, LocalCoords.Latitude.Minutes,
-				LocalCoords.Latitude.Seconds, LocalCoords.Latitude.Dir, LocalCoords.LatDecimal);
-		printf("LONGITUDE --> %03d degrees %02d minutes %04.04f seconds %c (%lf)\r\n",
-				LocalCoords.Longitude.Degrees, LocalCoords.Longitude.Minutes,
-				LocalCoords.Longitude.Seconds, LocalCoords.Longitude.Dir, LocalCoords.LonDecimal);*/
-		printf("LATITUDE  --> %02hu degrees %02hhu minutes %04.04f seconds %c (%.7lf)\r\n",
-				LocalCoords.Latitude.Degrees, LocalCoords.Latitude.Minutes,
-				LocalCoords.Latitude.Seconds, LocalCoords.Latitude.Dir, LocalCoords.LatDecimal);
-		printf("LONGITUDE --> %03hu degrees %02hhu minutes %04.04f seconds %c (%.7lf)\r\n",
-				LocalCoords.Longitude.Degrees, LocalCoords.Longitude.Minutes,
-				LocalCoords.Longitude.Seconds, LocalCoords.Longitude.Dir, LocalCoords.LonDecimal);
-		printf("ALTITUDE(%04.03f),hAcc(%04.01f), vAcc(%04.01f), Speed(%04.03f), Course(%04.02f)\r\n", 
+		printf("lat: %.7lf", LocalCoords.LatDecimal);
+		printf("lon: %.7lf", LocalCoords.LonDecimal);
+		printf("alt: %04.03f,hAcc: %04.01f, vAcc: %04.01f, Speed: %04.03f, Course: %04.02f", 
 			 LocalCoords.Altitude, LocalCoords.HorizAccu, LocalCoords.VertiAccu, LocalCoords.Speed,
 			 LocalCoords.Course );
-		printf("HDOP(%04.03f),VDOP(%04.01f), TDOP(%04.01f), numSvs(%hhu)\r\n", 
+		printf("HDOP: %04.03f, VDOP: %04.01f, TDOP: %04.01f, numSvs: %hhu", 
 			 LocalCoords.HDOP, LocalCoords.VDOP, LocalCoords.TDOP, LocalCoords.numSvs );
 	}
 }
@@ -913,8 +903,6 @@ int handleKeys( char* buffer )
 int main(int argc, char *argv[])
 {
 	int  					ReturnCode = 0;
-	BOOL              terminate=FALSE;
-   char              keyEntry[255];
 
    printf( " OWASYS -> Starting Test_GPS_Module %s (%s, %s)\n", APP_VERSION, __DATE__ , __TIME__);
 
