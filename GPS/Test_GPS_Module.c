@@ -164,6 +164,7 @@ void GetFullGPSPosition( void )
             LocalCoords.PosValid, LocalCoords.OldValue, NumOld, LocalCoords.NavStatus, LocalCoords.LatDecimal, LocalCoords.LonDecimal,
              LocalCoords.Altitude, LocalCoords.HorizAccu, LocalCoords.VertiAccu, LocalCoords.Speed,LocalCoords.Course, LocalCoords.HDOP,
              LocalCoords.VDOP, LocalCoords.TDOP, LocalCoords.numSvs);
+      fflush(stdout); // Asegurar que se envía el contenido al buffer de salida
 	
 	}
 }
