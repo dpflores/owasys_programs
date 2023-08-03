@@ -933,8 +933,9 @@ int main(int argc, char *argv[])
    SetGpsLed();
    SetMeasRate();
    while(1) {
+      delay(10);
       GetFullGPSPosition();
-      delay(0.5);
+      
    }
 
 
