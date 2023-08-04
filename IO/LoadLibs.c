@@ -138,6 +138,12 @@ void LoadIOSFunctions( void *wLibHandle )
    if( dlerror() != NULL )  {
       WriteLog("No DIGIO_Set_LED_SW0() found");
    }
+
+   FncDIGIO_Set_LED_SW0_Input = ( int ( *) ( void)) dlsym( wLibHandle, "DIGIO_Set_LED_SW0_Input");
+   if( dlerror() != NULL )  {
+      WriteLog("No DIGIO_Set_LED_SW0_Input() found");
+   }
+
    FncDIGIO_Set_LED_SW1 = ( int ( *) ( unsigned char)) dlsym( wLibHandle, "DIGIO_Set_LED_SW1");
    if( dlerror() != NULL )  {
       WriteLog("No DIGIO_Set_LED_SW1() found");

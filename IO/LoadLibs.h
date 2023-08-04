@@ -69,6 +69,7 @@
       int (*FncIO_IsActive)( int *);
       int (*FncDIGIO_Set_ADC_RANGE)( unsigned char, unsigned char);
       int (*FncDIGIO_Set_LED_SW0)( unsigned char);
+      int (*FncDIGIO_Set_LED_SW0_Input)( void);
       int (*FncDIGIO_Set_LED_SW1)( unsigned char);
       int (*FncDIGIO_Set_LED_SW2)( unsigned char);
       int (*FncDIGIO_Set_PPS_GPS)( unsigned char);
@@ -143,12 +144,11 @@
       extern int (*FncIO_IsActive)( int *);
       extern int (*FncDIGIO_Set_ADC_RANGE)( unsigned char, unsigned char);
       extern int (*FncDIGIO_Set_LED_SW0)( unsigned char);
+      extern int (*FncDIGIO_Set_LED_SW0_Input)( void);
       extern int (*FncDIGIO_Set_LED_SW1)( unsigned char);
       extern int (*FncDIGIO_Set_LED_SW2)( unsigned char);
       extern int (*FncDIGIO_Set_PPS_GPS)( unsigned char);
       extern int (*FncANAGIO_GetAnalogIn)( int, int *);
-
-      extern int (*FncDIGIO_Set_LED_SW0_Input)( void);
 
       extern int ( *FncDIGIO_ConfigureInterruptService)( unsigned char wInput, unsigned char wEdge, void(*)(input_int_t), unsigned short int wNumInts);
       extern int ( *FncDIGIO_GetNumberOfInterrupts)( unsigned char wInput, unsigned long *pTotal );
