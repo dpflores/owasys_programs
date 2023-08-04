@@ -125,15 +125,6 @@ static void GetWakeUpreason( void)
 int main( int argc, char *argv[] )
 {
    int            ReturnCode   = 0;
-   
-   int            Option;
-   THW_TIME_DATE  CurrentTime;
-   unsigned long  MainCpuMask = 0, ExpBoardMask = 0;
-   StructVersion  SWVersion;
-	move_int_t 		MoveValue;
-
-
-   unsigned char Range = 0, Threshold = 10, Time = 10;
 
    // printf("Enter acceleration type (0: filtered, 1: raw):");
    unsigned char accel_type = 0;
