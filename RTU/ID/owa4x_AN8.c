@@ -141,7 +141,8 @@ int main( int argc, char *argv[] )
       return 1;
    }
   
-   printf("%s", serial);
+   // Print serial number
+   printf("Serial Number: %s\n", serial);
    fflush(stdout);
 
 
