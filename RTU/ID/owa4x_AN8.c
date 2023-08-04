@@ -150,8 +150,8 @@ int main( int argc, char *argv[] )
    
    //Obtener el numero serial del dispositivo
    unsigned char serial[16];
-   if( (ReturnCode = RTUGetSerialNumber(serial)) != NO_ERROR) {
-      printf("Error %d in RTUGetSerialNumber()...\n", ReturnCode);
+   if( (ReturnCode = GetSerialNumber(serial)) != NO_ERROR) {
+      printf("Error %d in GetSerialNumber()...\n", ReturnCode);
       return 1;
    }
   
