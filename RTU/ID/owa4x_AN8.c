@@ -60,9 +60,6 @@ static char *MonthList[] = {(char*)"", (char*)"January", (char*)"February", (cha
 //-----------------------------------------------------------------------//
 static unsigned long GetULValue(void);
 
-static void MoveIntHandler( move_int_t wMoveState);
-static void GetWakeUpreason( void);
-
 void delay(int number_of_seconds);
 
 
@@ -126,8 +123,6 @@ int main( int argc, char *argv[] )
 {
    int            ReturnCode   = 0;
 
-   // printf("Enter acceleration type (0: filtered, 1: raw):");
-   unsigned char accel_type = 0;
 
     if( (ReturnCode = RTUControl_Initialize(NULL)) != NO_ERROR) {
       printf("Error %d in RTUControl_Initialize()...\n", ReturnCode);
