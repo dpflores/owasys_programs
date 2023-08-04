@@ -475,9 +475,9 @@ int main( void )
    }
 
    // Escribimos el LED de Power ON
-   DIGIO_Set_LED_SW1(1);
+   (*FncDIGIO_Set_LED_SW1)(1);
    // Para que el LED amarillo sea controlado por el GSM
-   DIGIO_Set_LED_SW0_Input();
+   (*FncDIGIO_Set_LED_SW0_Input)();
 
 
 

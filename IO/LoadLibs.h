@@ -148,6 +148,8 @@
       extern int (*FncDIGIO_Set_PPS_GPS)( unsigned char);
       extern int (*FncANAGIO_GetAnalogIn)( int, int *);
 
+      extern int (*FncDIGIO_Set_LED_SW0_Input)( void);
+
       extern int ( *FncDIGIO_ConfigureInterruptService)( unsigned char wInput, unsigned char wEdge, void(*)(input_int_t), unsigned short int wNumInts);
       extern int ( *FncDIGIO_GetNumberOfInterrupts)( unsigned char wInput, unsigned long *pTotal );
       extern int ( *FncDIGIO_RemoveInterruptService)( unsigned char wInput );
