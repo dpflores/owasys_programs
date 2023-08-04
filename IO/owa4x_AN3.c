@@ -479,8 +479,12 @@ int main( void )
    // Para que el LED amarillo sea controlado por el GSM
    (*FncDIGIO_Set_LED_SW0_Input)();
 
-   // Activate red led
+   // blink red led 500ms on/ 500 ms off de forma continua
    (*FncDIGIO_Set_LED_SW2)(1);
+   (*Fncusecsleep)(0, 500000);
+   (*FncDIGIO_Set_LED_SW2)(0);
+   (*Fncusecsleep)(0, 500000);
+
 
    if( (ReturnCode = (*FncIO_Finalize)()) != NO_ERROR ) {
       printf( "Error %d in IO_Finalize()...\n", ReturnCode);
