@@ -143,7 +143,7 @@ int main( int argc, char *argv[] )
   
    // Print serial number
    printf("Serial Number: %s\n", serial);
-   fflush(stdout);
+   // fflush(stdout);
 
 
    if( ( ReturnCode = RTUControl_Finalize()) != NO_ERROR) {
