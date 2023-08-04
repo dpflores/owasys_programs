@@ -438,8 +438,7 @@ int main( void )
    int   ReturnCode = 0;
    void  *LibIOHandle = NULL;
    void  *LibRTUControlHandle = NULL;
-	int   terminate = FALSE;
-   char  keyEntry[255];
+
 
 	printf("Enter owa3x_AN3 version(%s) program\r\n", SW_VERSION);
    LoadExternalLibrary((char *)LIBRTU, &LibRTUControlHandle);
@@ -475,20 +474,12 @@ int main( void )
       return 1;
    }
 
-   printHelp();
-   while(!terminate) {
-      printf("\n >>");
-      getEntry(keyEntry);
-      if( keyEntry[0] != '\0' ) {
-         //Handling commands
-         if( handleKeys(keyEntry) != NO_ERROR )
-            terminate = TRUE;
-         else {
-            printHelp();
-            keyEntry[0] = '\0';
-         }
-      }
-   }
+   // Escribimos el LED de Power ON
+   DIGIO_Set_LED_SW1(1);
+   // Para que el LED amarillo sea controlado por el GSM
+   DIGIO_Set_LED_SW0_Input();
+
+
 
    if( (ReturnCode = (*FncIO_Finalize)()) != NO_ERROR ) {
       printf( "Error %d in IO_Finalize()...\n", ReturnCode);
