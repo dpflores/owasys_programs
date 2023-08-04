@@ -53,7 +53,7 @@
 #include "owa4x_AN3.h"
 #include "LoadLibs.h"
 #include "uarts.h"
-
+#include "owa4x/IOs_ModuleDefs.h"
 //-----------------------------------------------------------------//
 // Function: getvalue()
 // Input Params:
