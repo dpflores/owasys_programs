@@ -1,0 +1,3 @@
+v0.0.1          first version
+v0.0.2          added CAN1 wake up signal
+v0.0.3          added BLE wake up signal

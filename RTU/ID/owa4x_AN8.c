@@ -148,35 +148,16 @@ int main( int argc, char *argv[] )
     }
       
    
-   ReturnCode = RTU_RemoveMovementSensor();
-   if( ReturnCode) {
-      printf("ERROR %d in removing MOVE\n", ReturnCode);
-   } 
-   
-   ReturnCode = RTU_CfgMovementSensor(Range, Threshold, Time, (void (*)(move_int_t))&MoveIntHandler);
-   if( ReturnCode) {
-      printf("ERROR %d in config Acelerometer\n", ReturnCode);
-   } 
-
-   while (1)
-   {
-      if( accel_type == 0) {
-               ReturnCode = RTU_GetMovementSensor( &MoveValue);
-      } else {
-               ReturnCode = RTU_GetRawAcceleration( &MoveValue);
-      }
-      if( ReturnCode) {
-         printf("ERROR %d in getting MOVEMENT SENSOR\n", ReturnCode);
-      } 
-      else {
-         printf("{\"scale\": %d, \"x_axis\": %.3f, \"y_axis\": %.3f, \"z_axis\": %.3f}", MoveValue.scale, MoveValue.x_axis, MoveValue.y_axis, MoveValue.z_axis);
-         fflush(stdout); // Asegurar que se envía el contenido al buffer de salida
-
-      }
-
-      delay(100);
-
+   //Obtener el numero serial del dispositivo
+   unsigned char serial[16];
+   if( (ReturnCode = RTUGetSerialNumber(serial)) != NO_ERROR) {
+      printf("Error %d in RTUGetSerialNumber()...\n", ReturnCode);
+      return 1;
    }
+  
+   printf("%s", serial);
+   fflush(stdout);
+
 
    if( ( ReturnCode = RTUControl_Finalize()) != NO_ERROR) {
       printf("Error %d in RTUControl_Finalize()...\n", ReturnCode);
