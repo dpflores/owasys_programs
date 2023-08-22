@@ -529,15 +529,15 @@ int main(int argc, char *argv[])
    void *LibIOHandle = NULL;
    void *LibRTUControlHandle = NULL;
 
-   printf("Enter owa3x_AN3 version(%s) program\r\n", SW_VERSION);
+   // printf("Enter owa3x_AN3 version(%s) program\r\n", SW_VERSION);
    LoadExternalLibrary((char *)LIBRTU, &LibRTUControlHandle);
    LoadRTUControlFunctions(LibRTUControlHandle);
-   printf("All external Control functions loaded\n");
+   // printf("All external Control functions loaded\n");
 
    LoadExternalLibrary((char *)LIBIO, &LibIOHandle);
    LoadIOSFunctions(LibIOHandle);
 
-   printf("All external functions loaded...\n");
+   // printf("All external functions loaded...\n");
    if ((ReturnCode = (*FncRTUControl_Initialize)(NULL)) != NO_ERROR)
    {
       printf("Error %d in RTUControl_Initialize()...\n", ReturnCode);
@@ -582,11 +582,15 @@ int main(int argc, char *argv[])
    }
    unsigned char readvalue;
 
+   // Escribimos el output del pin a 0 por seguridad
+   (*FncDIGIO_Set_DOUT)(inputNumber, 0);
+
+   // Ahora si leemos el valor del pin
    retVal = (*FncDIGIO_Get_DIN)(inputNumber, &readvalue);
 
    if (retVal == NO_ERROR)
    {
-      printf(" IN%d = %hhu", inputNumber, readvalue);
+      // printf(" IN%d = %hhu\n", inputNumber, readvalue);
    }
    else
    {
