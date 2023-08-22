@@ -11,7 +11,7 @@ ARM_STRIP_83 = arm-linux-gnueabihf-8.3-strip
 CFLAGS = -Wall -mthumb -mthumb-interwork -D_REENTRANT
 
 #OBJECTS
-OBJECT = DIGITAL_OUTPUT_OWASYS
+OBJECT = LEDS_OWASYS
 
 #Source Files
 SOURCE = ./*.c
