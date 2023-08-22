@@ -585,7 +585,7 @@ int main(int argc, char *argv[])
    retVal = (*FncDIGIO_Set_DOUT)(outputNumber, state);
    if (retVal == NO_ERROR)
    {
-      printf(" OUT%d = %hhu", outputNumber, state);
+      printf(" OUT%d = %hhu\n", outputNumber, state);
    }
    else
    {
