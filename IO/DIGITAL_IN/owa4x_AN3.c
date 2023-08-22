@@ -596,11 +596,11 @@ int main(int argc, char *argv[])
       if (retVal == NO_ERROR)
       {
          printf("%hhu\n", readvalue);
+         fflush(stdout); // Asegurar que se envía el contenido al buffer de salida
       }
       else
       {
          printf("Error %d setting INput %d\r\n", retVal, inputNumber);
-         fflush(stdout); // Asegurar que se envía el contenido al buffer de salida
       }
    }
 
