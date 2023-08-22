@@ -590,11 +590,12 @@ int main(int argc, char *argv[])
 
    if (retVal == NO_ERROR)
    {
-      // printf(" IN%d = %hhu\n", inputNumber, readvalue);
+      printf("%hhu\n", readvalue);
    }
    else
    {
       printf("Error %d setting INput %d\r\n", retVal, inputNumber);
+      fflush(stdout); // Asegurar que se envía el contenido al buffer de salida
    }
 
    if ((ReturnCode = (*FncIO_Finalize)()) != NO_ERROR)
