@@ -569,7 +569,7 @@ int main(int argc, char *argv[])
 
    if (argc != 3)
    {
-      printf("Usage: %d <output_number> <state>", argv[0]);
+      printf("Usage: %s <output_number> <state>", argv[0]);
       return 1; // Return an error code
    }
    // convert the arguments to integers
