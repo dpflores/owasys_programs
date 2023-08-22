@@ -1,0 +1,7 @@
+v0.0.1          2018-01-08 first version
+v0.0.2          2018-01-16 some definitions corrected
+v0.0.3          v0.0.3 - new IO functions added
+v0.0.4          RS485 crtscts flag removed
+v0.0.5          v0.0.5 - Added command to read one wire temp sensor DS1820
+v0.0.6          v0.0.6 - get all input prints human readable values for all inputs
+v0.0.7          Added battery charging functions availabel with RTU library >= 1.0.17
