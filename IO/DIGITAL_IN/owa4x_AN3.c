@@ -597,6 +597,8 @@ int main(int argc, char *argv[])
       {
          printf("%hhu\n", readvalue);
          fflush(stdout); // Asegurar que se envía el contenido al buffer de salida
+         // delay de 100 milisegundos
+         usleep(100000);
       }
       else
       {
