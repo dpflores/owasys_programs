@@ -595,7 +595,7 @@ int main(int argc, char *argv[])
 
       if (retVal == NO_ERROR)
       {
-         printf("%hhu\n", readvalue);
+         printf("%hhu", readvalue);
          fflush(stdout); // Asegurar que se envía el contenido al buffer de salida
          // delay de 100 milisegundos
          usleep(100000);
