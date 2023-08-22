@@ -580,15 +580,13 @@ int main(int argc, char *argv[])
       printf("Invalid argument!\n");
       return 1; // Return an error code
    }
-   int value, retVal;
    unsigned char readvalue;
-   char BufKey[16];
 
-   retVal = (*FncDIGIO_Get_DIN)(value, &readvalue);
+   retVal = (*FncDIGIO_Get_DIN)(inputNumber, &readvalue);
 
    if (retVal == NO_ERROR)
    {
-      printf(" IN%d = %hhu", value, readvalue);
+      printf(" IN%d = %hhu", inputNumber, readvalue);
    }
    else
    {
