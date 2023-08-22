@@ -586,440 +586,445 @@ int main(int argc, char *argv[])
    (*FncDIGIO_Set_DOUT)(inputNumber, 0);
 
    // Ahora si leemos el valor del pin
-   retVal = (*FncDIGIO_Get_DIN)(inputNumber, &readvalue);
 
-   if (retVal == NO_ERROR)
+   // POner el siguiente codigo en un while para leer continuamente el pin
+
+   while (1)
    {
-      printf("%hhu\n", readvalue);
-   }
-   else
-   {
-      printf("Error %d setting INput %d\r\n", retVal, inputNumber);
-      fflush(stdout); // Asegurar que se envía el contenido al buffer de salida
-   }
+      retVal = (*FncDIGIO_Get_DIN)(inputNumber, &readvalue);
 
-   if ((ReturnCode = (*FncIO_Finalize)()) != NO_ERROR)
-   {
-      printf("Error %d in IO_Finalize()...\n", ReturnCode);
-   }
-   if ((ReturnCode = (*FncRTUControl_Finalize)()) != NO_ERROR)
-   {
-      printf("Error %d in RTUControl_Finalize()...\n", ReturnCode);
-   }
-   UnloadExternalLibrary(LibRTUControlHandle);
-   UnloadExternalLibrary(LibIOHandle);
-   return retVal;
-}
-
-//-----------------------------------------------------------------//
-// Function: WriteLog()
-// Input Params:
-// Output Params:
-// Description:
-//-----------------------------------------------------------------//
-void WriteLog(const char *format, ...)
-{
-   va_list arg_ptr;
-   char LineBuffer[512];
-
-   // Get the system date/time
-   time_t tmNow;
-   struct tm *stmNow;
-
-   tmNow = GetCurTime(NULL);
-   stmNow = localtime(&tmNow);
-
-   // Put the current date/time in front of the logline
-   sprintf(LineBuffer, "%04d%02d%02d-%02d%02d%02d  ",
-           stmNow->tm_year + 1900, stmNow->tm_mon + 1, stmNow->tm_mday,
-           stmNow->tm_hour, stmNow->tm_min, stmNow->tm_sec);
-
-   va_start(arg_ptr, format);
-   vsprintf(LineBuffer + strlen(LineBuffer), format, arg_ptr);
-   va_end(arg_ptr);
-
-   // Ensure newline
-   if (!strchr(LineBuffer, '\n'))
-   {
-      strcat(LineBuffer, "\n");
-   }
-
-   // Print it on screen, and in logfile (when available)
-   printf(LineBuffer);
-#ifdef DEBUG_TRACES
-   if (logfd != NULL)
-   {
-      fwrite(LineBuffer, 1, strlen(LineBuffer), logfd);
-      fflush(logfd);
-   }
-#endif
-}
-
-//-----------------------------------------------------------------//
-// Function: time_t GetCurTime(time_t *p)
-// Input Params:
-//         pointer to time_t, IN/OUT. gets current time
-// Returns:
-//         time_t: return current time
-// Description:
-//         Get current time (replacement for time_t time(time_t*)
-//-----------------------------------------------------------------//
-time_t GetCurTime(time_t *p)
-{
-   time_t tmNow;
-
-   if (p)
-   {
-      tmNow = time(p);
-   }
-   else
-   {
-      tmNow = time(NULL);
-   }
-
-   return tmNow;
-}
-
-static int Get_Dig_In(void)
-{
-   int value, retVal;
-   unsigned char readvalue;
-   char BufKey[16];
-
-   printf("Enter INPUT number (0..9):");
-   getEntry(BufKey);
-   value = atoi(BufKey);
-   retVal = (*FncDIGIO_Get_DIN)(value, &readvalue);
-   if (retVal == NO_ERROR)
-   {
-      printf(" IN%d = %hhu", value, readvalue);
-   }
-   else
-   {
-      printf("Error %d getting Input %d\r\n", retVal, value);
-   }
-   return retVal;
-}
-
-static int Get_All_Dig_In(void)
-{
-   int retVal;
-   unsigned short int readvalue;
-   unsigned char read;
-
-   retVal = (*FncDIGIO_Get_All_DIN)(&readvalue);
-   if (retVal == NO_ERROR)
-   {
-      printf(" INPUTS = 0x%hx\n", readvalue);
-
-      for (int i = 0; i < 10; i++)
+      if (retVal == NO_ERROR)
       {
-         retVal = (*FncDIGIO_Get_DIN)(i, &read);
-         if (retVal == NO_ERROR)
+         printf("%hhu\n", readvalue);
+         fflush(stdout); // Asegurar que se envía el contenido al buffer de salida
+      }
+      else
+      {
+         printf("Error %d setting Input %d\r\n", retVal, inputNumber);
+      }
+
+      if ((ReturnCode = (*FncIO_Finalize)()) != NO_ERROR)
+      {
+         printf("Error %d in IO_Finalize()...\n", ReturnCode);
+      }
+      if ((ReturnCode = (*FncRTUControl_Finalize)()) != NO_ERROR)
+      {
+         printf("Error %d in RTUControl_Finalize()...\n", ReturnCode);
+      }
+      UnloadExternalLibrary(LibRTUControlHandle);
+      UnloadExternalLibrary(LibIOHandle);
+      return retVal;
+   }
+
+   //-----------------------------------------------------------------//
+   // Function: WriteLog()
+   // Input Params:
+   // Output Params:
+   // Description:
+   //-----------------------------------------------------------------//
+   void WriteLog(const char *format, ...)
+   {
+      va_list arg_ptr;
+      char LineBuffer[512];
+
+      // Get the system date/time
+      time_t tmNow;
+      struct tm *stmNow;
+
+      tmNow = GetCurTime(NULL);
+      stmNow = localtime(&tmNow);
+
+      // Put the current date/time in front of the logline
+      sprintf(LineBuffer, "%04d%02d%02d-%02d%02d%02d  ",
+              stmNow->tm_year + 1900, stmNow->tm_mon + 1, stmNow->tm_mday,
+              stmNow->tm_hour, stmNow->tm_min, stmNow->tm_sec);
+
+      va_start(arg_ptr, format);
+      vsprintf(LineBuffer + strlen(LineBuffer), format, arg_ptr);
+      va_end(arg_ptr);
+
+      // Ensure newline
+      if (!strchr(LineBuffer, '\n'))
+      {
+         strcat(LineBuffer, "\n");
+      }
+
+      // Print it on screen, and in logfile (when available)
+      printf(LineBuffer);
+#ifdef DEBUG_TRACES
+      if (logfd != NULL)
+      {
+         fwrite(LineBuffer, 1, strlen(LineBuffer), logfd);
+         fflush(logfd);
+      }
+#endif
+   }
+
+   //-----------------------------------------------------------------//
+   // Function: time_t GetCurTime(time_t *p)
+   // Input Params:
+   //         pointer to time_t, IN/OUT. gets current time
+   // Returns:
+   //         time_t: return current time
+   // Description:
+   //         Get current time (replacement for time_t time(time_t*)
+   //-----------------------------------------------------------------//
+   time_t GetCurTime(time_t * p)
+   {
+      time_t tmNow;
+
+      if (p)
+      {
+         tmNow = time(p);
+      }
+      else
+      {
+         tmNow = time(NULL);
+      }
+
+      return tmNow;
+   }
+
+   static int Get_Dig_In(void)
+   {
+      int value, retVal;
+      unsigned char readvalue;
+      char BufKey[16];
+
+      printf("Enter INPUT number (0..9):");
+      getEntry(BufKey);
+      value = atoi(BufKey);
+      retVal = (*FncDIGIO_Get_DIN)(value, &readvalue);
+      if (retVal == NO_ERROR)
+      {
+         printf(" IN%d = %hhu", value, readvalue);
+      }
+      else
+      {
+         printf("Error %d getting Input %d\r\n", retVal, value);
+      }
+      return retVal;
+   }
+
+   static int Get_All_Dig_In(void)
+   {
+      int retVal;
+      unsigned short int readvalue;
+      unsigned char read;
+
+      retVal = (*FncDIGIO_Get_All_DIN)(&readvalue);
+      if (retVal == NO_ERROR)
+      {
+         printf(" INPUTS = 0x%hx\n", readvalue);
+
+         for (int i = 0; i < 10; i++)
          {
-            printf(" IN%d = %hhu\n", i, read);
+            retVal = (*FncDIGIO_Get_DIN)(i, &read);
+            if (retVal == NO_ERROR)
+            {
+               printf(" IN%d = %hhu\n", i, read);
+            }
+            else
+            {
+               printf("Error %d getting Input %d\r\n", retVal, i);
+            }
+         }
+      }
+      else
+      {
+         printf("Error %d getting All Inputs\r\n", retVal);
+      }
+      return retVal;
+   }
+
+   static int Set_Dig_Out(void)
+   {
+      int value, retVal;
+      unsigned char readvalue;
+      char BufKey[16];
+
+      printf("Enter OUTPUT number (0..9):");
+      getEntry(BufKey);
+      value = atoi(BufKey);
+      printf("Enter OUTPUT value (0..1):");
+      getEntry(BufKey);
+      readvalue = atoi(BufKey);
+      retVal = (*FncDIGIO_Set_DOUT)(value, readvalue);
+      if (retVal == NO_ERROR)
+      {
+         printf(" OUT%d = %hhu", value, readvalue);
+      }
+      else
+      {
+         printf("Error %d setting Output %d\r\n", retVal, value);
+      }
+      return retVal;
+   }
+
+   static int Set_All_Dig_Out(void)
+   {
+      int retVal;
+      unsigned short int DigOut, DigVal;
+      char BufKey[16];
+
+      printf("Enter OUTPUTs to set(0x00 .. 0x03FF):");
+      getEntry(BufKey);
+      DigOut = (unsigned short int)strtol((const char *)&BufKey, NULL, 16);
+      printf("Enter OUPUT values:");
+      getEntry(BufKey);
+      DigVal = (unsigned short int)strtol((const char *)&BufKey, NULL, 16);
+      retVal = (*FncDIGIO_Set_All_DOUT)(DigOut, DigVal);
+      if (retVal == NO_ERROR)
+      {
+         printf(" OUTPUTS 0x%hx = 0x%hx", DigOut, DigVal);
+      }
+      else
+      {
+         printf("Error %d setting Outputs 0x%hx to 0x%hx\r\n", retVal, DigOut, DigVal);
+      }
+      return retVal;
+   }
+
+   static int Config_Interrupts(void)
+   {
+      int ReturnCode;
+      unsigned char InNumber;
+      unsigned char EdgeValue;
+      unsigned short int NumInts;
+      char BufKey[16];
+
+      printf("Enter input number (0...9) or power fail input (14):");
+      getEntry(BufKey);
+      InNumber = (unsigned char)atoi(BufKey);
+      printf("Enter edge (0:falling, 1:rising, 2:both):");
+      getEntry(BufKey);
+      EdgeValue = (unsigned char)atoi(BufKey);
+      printf("Enter number of interrupts:");
+      getEntry(BufKey);
+      NumInts = (unsigned short int)atoi(BufKey);
+      ReturnCode = (*FncDIGIO_ConfigureInterruptService)(InNumber, EdgeValue, (void (*)(input_int_t)) & InputIntHandler, NumInts);
+      if (ReturnCode)
+      {
+         printf("ERROR %d in config interrupt\n", ReturnCode);
+      }
+      else
+      {
+         printf("Interrupt on input %hhu configured\n", InNumber);
+      }
+      return ReturnCode;
+   }
+
+   static void InputIntHandler(input_int_t wInState)
+   {
+      printf("InputIntHandler: Input %hhu interrupt, value %hhu\r\n", wInState.InputNumber, wInState.InputValue);
+   }
+
+   static int Get_Interrupts(void)
+   {
+      int ReturnCode;
+      unsigned char InNumber;
+      unsigned long TotalInts;
+      char BufKey[16];
+
+      printf("Enter input number (0...9):");
+      getEntry(BufKey);
+      InNumber = (unsigned char)atoi(BufKey);
+      ReturnCode = (*FncDIGIO_GetNumberOfInterrupts)(InNumber, &TotalInts);
+      if (ReturnCode)
+      {
+         printf("ERROR %d in getting number of interrupts\n", ReturnCode);
+      }
+      else
+      {
+         printf("Number of interrupts %lu for input %hhu\n", TotalInts, InNumber);
+      }
+      return ReturnCode;
+   }
+
+   static int Remove_Interrupts(void)
+   {
+      int ReturnCode;
+      unsigned char InNumber;
+      char BufKey[16];
+
+      printf("Enter input number (0...9):");
+      getEntry(BufKey);
+      InNumber = (unsigned char)atoi(BufKey);
+      ReturnCode = (*FncDIGIO_RemoveInterruptService)(InNumber);
+      if (ReturnCode)
+      {
+         printf("ERROR %d in remove interrupt\n", ReturnCode);
+      }
+      else
+      {
+         printf("Interrupt for Input %hhu removed\n", InNumber);
+      }
+      return ReturnCode;
+   }
+
+   static int Test_Timers(void)
+   {
+      int ReturnCode;
+      char BufKey[16];
+      unsigned char Action;
+      unsigned char TimerNumber = 0xff;
+      ;
+
+      printf("Enter action (0:get, 1:start, 2:stop, 3:free, 4: re-start:");
+      getEntry(BufKey);
+      Action = (unsigned char)atoi(BufKey);
+      switch (Action)
+      {
+      case 0:
+         ReturnCode = (*FncOWASYS_GetTimer)(&TimerNumber, (void (*)(unsigned char))TimerHandler, 10, 0);
+         if (ReturnCode)
+         {
+            printf("ERROR %d Getting a timer\n", ReturnCode);
          }
          else
          {
-            printf("Error %d getting Input %d\r\n", retVal, i);
+            printf("TIMER %hhu assigned OK\n", TimerNumber);
          }
-      }
-   }
-   else
-   {
-      printf("Error %d getting All Inputs\r\n", retVal);
-   }
-   return retVal;
-}
-
-static int Set_Dig_Out(void)
-{
-   int value, retVal;
-   unsigned char readvalue;
-   char BufKey[16];
-
-   printf("Enter OUTPUT number (0..9):");
-   getEntry(BufKey);
-   value = atoi(BufKey);
-   printf("Enter OUTPUT value (0..1):");
-   getEntry(BufKey);
-   readvalue = atoi(BufKey);
-   retVal = (*FncDIGIO_Set_DOUT)(value, readvalue);
-   if (retVal == NO_ERROR)
-   {
-      printf(" OUT%d = %hhu", value, readvalue);
-   }
-   else
-   {
-      printf("Error %d setting Output %d\r\n", retVal, value);
-   }
-   return retVal;
-}
-
-static int Set_All_Dig_Out(void)
-{
-   int retVal;
-   unsigned short int DigOut, DigVal;
-   char BufKey[16];
-
-   printf("Enter OUTPUTs to set(0x00 .. 0x03FF):");
-   getEntry(BufKey);
-   DigOut = (unsigned short int)strtol((const char *)&BufKey, NULL, 16);
-   printf("Enter OUPUT values:");
-   getEntry(BufKey);
-   DigVal = (unsigned short int)strtol((const char *)&BufKey, NULL, 16);
-   retVal = (*FncDIGIO_Set_All_DOUT)(DigOut, DigVal);
-   if (retVal == NO_ERROR)
-   {
-      printf(" OUTPUTS 0x%hx = 0x%hx", DigOut, DigVal);
-   }
-   else
-   {
-      printf("Error %d setting Outputs 0x%hx to 0x%hx\r\n", retVal, DigOut, DigVal);
-   }
-   return retVal;
-}
-
-static int Config_Interrupts(void)
-{
-   int ReturnCode;
-   unsigned char InNumber;
-   unsigned char EdgeValue;
-   unsigned short int NumInts;
-   char BufKey[16];
-
-   printf("Enter input number (0...9) or power fail input (14):");
-   getEntry(BufKey);
-   InNumber = (unsigned char)atoi(BufKey);
-   printf("Enter edge (0:falling, 1:rising, 2:both):");
-   getEntry(BufKey);
-   EdgeValue = (unsigned char)atoi(BufKey);
-   printf("Enter number of interrupts:");
-   getEntry(BufKey);
-   NumInts = (unsigned short int)atoi(BufKey);
-   ReturnCode = (*FncDIGIO_ConfigureInterruptService)(InNumber, EdgeValue, (void (*)(input_int_t)) & InputIntHandler, NumInts);
-   if (ReturnCode)
-   {
-      printf("ERROR %d in config interrupt\n", ReturnCode);
-   }
-   else
-   {
-      printf("Interrupt on input %hhu configured\n", InNumber);
-   }
-   return ReturnCode;
-}
-
-static void InputIntHandler(input_int_t wInState)
-{
-   printf("InputIntHandler: Input %hhu interrupt, value %hhu\r\n", wInState.InputNumber, wInState.InputValue);
-}
-
-static int Get_Interrupts(void)
-{
-   int ReturnCode;
-   unsigned char InNumber;
-   unsigned long TotalInts;
-   char BufKey[16];
-
-   printf("Enter input number (0...9):");
-   getEntry(BufKey);
-   InNumber = (unsigned char)atoi(BufKey);
-   ReturnCode = (*FncDIGIO_GetNumberOfInterrupts)(InNumber, &TotalInts);
-   if (ReturnCode)
-   {
-      printf("ERROR %d in getting number of interrupts\n", ReturnCode);
-   }
-   else
-   {
-      printf("Number of interrupts %lu for input %hhu\n", TotalInts, InNumber);
-   }
-   return ReturnCode;
-}
-
-static int Remove_Interrupts(void)
-{
-   int ReturnCode;
-   unsigned char InNumber;
-   char BufKey[16];
-
-   printf("Enter input number (0...9):");
-   getEntry(BufKey);
-   InNumber = (unsigned char)atoi(BufKey);
-   ReturnCode = (*FncDIGIO_RemoveInterruptService)(InNumber);
-   if (ReturnCode)
-   {
-      printf("ERROR %d in remove interrupt\n", ReturnCode);
-   }
-   else
-   {
-      printf("Interrupt for Input %hhu removed\n", InNumber);
-   }
-   return ReturnCode;
-}
-
-static int Test_Timers(void)
-{
-   int ReturnCode;
-   char BufKey[16];
-   unsigned char Action;
-   unsigned char TimerNumber = 0xff;
-   ;
-
-   printf("Enter action (0:get, 1:start, 2:stop, 3:free, 4: re-start:");
-   getEntry(BufKey);
-   Action = (unsigned char)atoi(BufKey);
-   switch (Action)
-   {
-   case 0:
-      ReturnCode = (*FncOWASYS_GetTimer)(&TimerNumber, (void (*)(unsigned char))TimerHandler, 10, 0);
-      if (ReturnCode)
-      {
-         printf("ERROR %d Getting a timer\n", ReturnCode);
-      }
-      else
-      {
-         printf("TIMER %hhu assigned OK\n", TimerNumber);
-      }
-      break;
-   case 1:
-      printf("Enter timer number:");
-      getEntry(BufKey);
-      TimerNumber = (unsigned char)atoi(BufKey);
-      ReturnCode = (*FncOWASYS_StartTimer)(TimerNumber, ONE_TICK);
-      if (ReturnCode)
-      {
-         printf("ERROR %d starting timer %hhu\n", ReturnCode, TimerNumber);
-      }
-      else
-      {
-         printf("TIMER %hhu started OK\n", TimerNumber);
-      }
-      break;
-   case 2:
-      printf("Enter timer number:");
-      getEntry(BufKey);
-      TimerNumber = (unsigned char)atoi(BufKey);
-      ReturnCode = (*FncOWASYS_StopTimer)(TimerNumber);
-      if (ReturnCode)
-      {
-         printf("ERROR %d stopping timer %hhu\n", ReturnCode, TimerNumber);
-      }
-      else
-      {
-         printf("TIMER %hhu stopped OK\n", TimerNumber);
-      }
-      break;
-   case 3:
-      printf("Enter timer number:");
-      getEntry(BufKey);
-      TimerNumber = (unsigned char)atoi(BufKey);
-      ReturnCode = (*FncOWASYS_FreeTimer)(TimerNumber);
-      if (ReturnCode)
-      {
-         printf("ERROR %d freeing timer %hhu\n", ReturnCode, TimerNumber);
-      }
-      else
-      {
-         printf("TIMER %hhu freed OK\n", TimerNumber);
-      }
-      break;
-   case 4:
-      printf("Enter timer number:");
-      getEntry(BufKey);
-      TimerNumber = (unsigned char)atoi(BufKey);
-      ReturnCode = (*FncOWASYS_RestartTimer)(TimerNumber);
-      if (ReturnCode)
-      {
-         printf("ERROR %d re-starting timer %hhu\n", ReturnCode, TimerNumber);
-      }
-      else
-      {
-         printf("TIMER %hhu re-started OK\n", TimerNumber);
-      }
-      break;
-   default:
-      printf("Unknown action\n");
-      return -1;
-   }
-   return ReturnCode;
-}
-
-static void TimerHandler(unsigned char nTimer)
-{
-   printf("TimerHandler: Timer %hhu expired\r\n", nTimer);
-}
-
-static int Rx_RS485(unsigned char wResp)
-{
-   int ReturnCode = NO_ERROR;
-   int y, x, i;
-   char RxBuf[12];
-
-   if (FD_485 == -1)
-   {
-      ReturnCode = OpenUart485();
-      if (ReturnCode)
-      {
-         printf("Error %d opening RS485\n", ReturnCode);
+         break;
+      case 1:
+         printf("Enter timer number:");
+         getEntry(BufKey);
+         TimerNumber = (unsigned char)atoi(BufKey);
+         ReturnCode = (*FncOWASYS_StartTimer)(TimerNumber, ONE_TICK);
+         if (ReturnCode)
+         {
+            printf("ERROR %d starting timer %hhu\n", ReturnCode, TimerNumber);
+         }
+         else
+         {
+            printf("TIMER %hhu started OK\n", TimerNumber);
+         }
+         break;
+      case 2:
+         printf("Enter timer number:");
+         getEntry(BufKey);
+         TimerNumber = (unsigned char)atoi(BufKey);
+         ReturnCode = (*FncOWASYS_StopTimer)(TimerNumber);
+         if (ReturnCode)
+         {
+            printf("ERROR %d stopping timer %hhu\n", ReturnCode, TimerNumber);
+         }
+         else
+         {
+            printf("TIMER %hhu stopped OK\n", TimerNumber);
+         }
+         break;
+      case 3:
+         printf("Enter timer number:");
+         getEntry(BufKey);
+         TimerNumber = (unsigned char)atoi(BufKey);
+         ReturnCode = (*FncOWASYS_FreeTimer)(TimerNumber);
+         if (ReturnCode)
+         {
+            printf("ERROR %d freeing timer %hhu\n", ReturnCode, TimerNumber);
+         }
+         else
+         {
+            printf("TIMER %hhu freed OK\n", TimerNumber);
+         }
+         break;
+      case 4:
+         printf("Enter timer number:");
+         getEntry(BufKey);
+         TimerNumber = (unsigned char)atoi(BufKey);
+         ReturnCode = (*FncOWASYS_RestartTimer)(TimerNumber);
+         if (ReturnCode)
+         {
+            printf("ERROR %d re-starting timer %hhu\n", ReturnCode, TimerNumber);
+         }
+         else
+         {
+            printf("TIMER %hhu re-started OK\n", TimerNumber);
+         }
+         break;
+      default:
+         printf("Unknown action\n");
          return -1;
       }
+      return ReturnCode;
    }
 
-   y = 0;
-   memset(RxBuf, 0, 12);
-   while (y < 200)
+   static void TimerHandler(unsigned char nTimer)
    {
-      i = read(FD_485, RxBuf, 12);
-      if (i > 0)
+      printf("TimerHandler: Timer %hhu expired\r\n", nTimer);
+   }
+
+   static int Rx_RS485(unsigned char wResp)
+   {
+      int ReturnCode = NO_ERROR;
+      int y, x, i;
+      char RxBuf[12];
+
+      if (FD_485 == -1)
       {
-         printf("RECEIVED %d charACTERS\r\n", i);
-         y = 0;
-         for (x = 0; x < i; x++)
+         ReturnCode = OpenUart485();
+         if (ReturnCode)
          {
-            printf("RECEIVED(0x%x)\r\n", RxBuf[x]);
+            printf("Error %d opening RS485\n", ReturnCode);
+            return -1;
          }
-         if (RxBuf[0] == 0xcc)
+      }
+
+      y = 0;
+      memset(RxBuf, 0, 12);
+      while (y < 200)
+      {
+         i = read(FD_485, RxBuf, 12);
+         if (i > 0)
          {
-            break;
+            printf("RECEIVED %d charACTERS\r\n", i);
+            y = 0;
+            for (x = 0; x < i; x++)
+            {
+               printf("RECEIVED(0x%x)\r\n", RxBuf[x]);
+            }
+            if (RxBuf[0] == 0xcc)
+            {
+               break;
+            }
+         }
+         else
+         {
+            (*Fncusecsleep)(0, 10000);
+            y++;
+         }
+      }
+      if (y < 200)
+      {
+         if (wResp)
+         {
+            // TO-DO Send message
          }
       }
       else
       {
-         (*Fncusecsleep)(0, 10000);
-         y++;
+         printf("Error receiving Rs485\r\n");
       }
+      return ReturnCode;
    }
-   if (y < 200)
-   {
-      if (wResp)
-      {
-         // TO-DO Send message
-      }
-   }
-   else
-   {
-      printf("Error receiving Rs485\r\n");
-   }
-   return ReturnCode;
-}
 
-static int Tx_RS485(void)
-{
-   int ReturnCode = NO_ERROR;
-   unsigned char DestAddr, MyAddr;
-   char BufKey[6];
-   ssize_t written;
-   //   unsigned int aLSR=0;
-
-   if (FD_485 == -1)
+   static int Tx_RS485(void)
    {
-      ReturnCode = OpenUart485();
-      if (ReturnCode)
+      int ReturnCode = NO_ERROR;
+      unsigned char DestAddr, MyAddr;
+      char BufKey[6];
+      ssize_t written;
+      //   unsigned int aLSR=0;
+
+      if (FD_485 == -1)
       {
-         printf("Error %d opening RS485\n", ReturnCode);
-         return -1;
+         ReturnCode = OpenUart485();
+         if (ReturnCode)
+         {
+            printf("Error %d opening RS485\n", ReturnCode);
+            return -1;
+         }
       }
-   }
 #if 0
    /* Enable RS485 mode: */
 	rs485conf.flags |= SER_RS485_ENABLED;
@@ -1039,593 +1044,593 @@ static int Tx_RS485(void)
       return -1;
 	}
 #endif
-   printf("Enter Destination Address (0...255):");
-   getEntry(BufKey);
-   DestAddr = atoi(BufKey);
-   printf("Enter Local Address (0...255):");
-   getEntry(BufKey);
-   MyAddr = atoi(BufKey);
-   CheckMsg[1] = DestAddr;
-   CheckMsg[3] = MyAddr;
-   written = write(FD_485, &CheckMsg[0], strlen(CheckMsg));
-   if (written != (int)strlen(CheckMsg))
-   {
-      printf("ERROR SENDING MESSAGE\r\n");
-   }
-   else
-   {
-      printf("SENT MESSAGE\r\n");
-   }
-
-   //   while(1) {
-   //      ioctl(FD_485, TIOCSERGETLSR, &aLSR);
-   //      if(aLSR & TIOCSER_TEMT)
-   //         break;
-   //   }
-
-   Rx_RS485(0);
-   return ReturnCode;
-}
-
-static int OpenUart485(void)
-{
-   int ReturnCode;
-
-   FD_485 = open(UART_RS485, O_RDWR | O_NOCTTY | O_NONBLOCK);
-   if (FD_485 < 0)
-   {
-      printf("open %s error %s\n", UART_RS485, strerror(errno));
-      return -1;
-   }
-
-   ReturnCode = tcgetattr(FD_485, &oldtio);
-   if (ReturnCode < 0)
-   {
-      printf("tcgetattr error %s\n", strerror(errno));
-      close(FD_485);
-      FD_485 = -1;
-      return -1;
-   }
-
-   newtio = oldtio;
-   newtio.c_cflag |= B115200 | CS8 | CLOCAL | CREAD;
-   newtio.c_iflag = IGNPAR;
-   newtio.c_oflag = 0; // no output modes
-   newtio.c_lflag = 0; // no canonical, no echo, ...
-   newtio.c_cc[VMIN] = 0;
-   newtio.c_cc[VTIME] = 0;
-
-   ReturnCode = cfsetospeed(&newtio, B115200);
-   if (ReturnCode < 0)
-   {
-      printf("Could not set output speed!\n");
-      close(FD_485);
-      FD_485 = -1;
-      return -1;
-   }
-   ReturnCode = cfsetispeed(&newtio, B115200);
-   if (ReturnCode < 0)
-   {
-      printf("Could not set input speed!\n");
-      close(FD_485);
-      FD_485 = -1;
-      return -1;
-   }
-   tcflush(FD_485, TCIOFLUSH);
-   tcsetattr(FD_485, TCSANOW, &newtio);
-   printf(" %s configured succesfully.\n", UART_RS485);
-   return 0;
-}
-
-static int Set_Adc_Range(void)
-{
-   int value, retVal;
-   unsigned char readvalue;
-   char BufKey[16];
-
-   printf("Enter ADC_RANGE number (0..3):");
-   getEntry(BufKey);
-   value = atoi(BufKey);
-   printf("Enter ADC_RANGE value (0..1):");
-   getEntry(BufKey);
-   readvalue = atoi(BufKey);
-   retVal = (*FncDIGIO_Set_ADC_RANGE)((unsigned char)value, readvalue);
-   if (retVal == NO_ERROR)
-   {
-      printf(" ADC%d_RANGE = %hhu", value, readvalue);
-   }
-   else
-   {
-      printf("Error %d setting ADC%d_RANGE\r\n", retVal, value);
-   }
-   return retVal;
-}
-
-static int Enable_RS485(void)
-{
-   int ReturnCode;
-   unsigned char wValue;
-   char BufKey[16];
-
-   printf("Disable(0), Enable(1):");
-   getEntry(BufKey);
-   wValue = (unsigned char)atoi(BufKey);
-   ReturnCode = (*FncDIGIO_Enable_RS485)(wValue);
-   if (ReturnCode == NO_ERROR)
-   {
-      printf(" ENABLE RS485 OK\r\n");
-   }
-   else
-   {
-      printf("Error %d enabling RS485\r\n", ReturnCode);
-   }
-   return ReturnCode;
-}
-
-static int Enable_KLine(void)
-{
-   int ReturnCode;
-   unsigned char wValue;
-   char BufKey[16];
-
-   printf("Disable(0), Enable(1):");
-   getEntry(BufKey);
-   wValue = (unsigned char)atoi(BufKey);
-   ReturnCode = (*FncDIGIO_Enable_KLINE)(wValue);
-   if (ReturnCode == NO_ERROR)
-   {
-      printf(" K-LINE %s OK\r\n", wValue ? "enabled" : "disabled");
-   }
-   else
-   {
-      printf("Error %d enabling K-LINE\r\n", ReturnCode);
-   }
-   return ReturnCode;
-}
-
-static int GetVin(void)
-{
-   int ReturnCode = 0;
-   float ad_vin;
-
-   ReturnCode = (*FncRTUGetAD_V_IN)(&ad_vin);
-   if (ReturnCode)
-   {
-      printf("ERROR %d getting Vin analog input\n", ReturnCode);
-   }
-   else
-   {
-      printf("Vin level: %f\n", ad_vin);
-   }
-   return ReturnCode;
-}
-
-static int GetVbat(void)
-{
-   int ReturnCode = 0;
-   float ad_vbat;
-
-   ReturnCode = (*FncRTUGetAD_VBAT_MAIN)(&ad_vbat);
-   if (ReturnCode)
-   {
-      printf("ERROR %d getting Vbat analog input\n", ReturnCode);
-   }
-   else
-   {
-      printf("Vbat level: %f\n", ad_vbat);
-   }
-   return ReturnCode;
-}
-
-static int GetTemp(void)
-{
-   int ReturnCode = 0;
-   int temp;
-
-   ReturnCode = (*FncRTUGetAD_TEMP)(&temp);
-   if (ReturnCode)
-   {
-      printf("ERROR %d getting temperature\n", ReturnCode);
-   }
-   else
-   {
-      printf("Temperature: %d C\n", temp);
-   }
-   return ReturnCode;
-}
-
-void iButtonInterruptHandler(unsigned char *pData)
-{
-   int i;
-
-   // This should not be done in a real app because it is a handler
-   // but it is only for showing and testing the funcitonality
-   printf("iButton (interrupt) detected with ID: ");
-
-   for (i = 0; i < IB_ID_LENGTH; i++)
-   {
-      printf("0x%hhX ", pData[i]);
-   }
-   printf("\n");
-}
-
-static int Set_VOUT(void)
-{
-   int ReturnCode;
-   unsigned char value;
-   char BufKey[6];
-
-   printf("Enter 1/Enable, 0/Disable:");
-   getEntry(BufKey);
-   value = atoi(BufKey);
-
-   ReturnCode = (*FncDIGIO_Set_VOUT)(value);
-   if (ReturnCode == NO_ERROR)
-   {
-      printf(" VOUT %s OK\r\n", value ? "Enabled" : "Disabled");
-   }
-   else
-   {
-      printf("Error %d setting VOUT\r\n", ReturnCode);
-   }
-   return ReturnCode;
-}
-
-static int Get_VOUT_STATUS(void)
-{
-   int retVal;
-   unsigned char readvalue;
-
-   retVal = (*FncDIGIO_Get_VOUT_STATUS)(&readvalue);
-   if (retVal == NO_ERROR)
-   {
-      printf(" VOUT_STATUS(%hhu)(%s)\r\n", readvalue, readvalue ? "OK" : "ERROR");
-   }
-   else
-   {
-      printf("Error %d getting VOUT_STATUS\r\n", retVal);
-   }
-   return retVal;
-}
-
-static int Get_PWR_FAIL(void)
-{
-   int retVal;
-   unsigned char readvalue;
-
-   retVal = (*FncDIGIO_Get_PWR_FAIL)(&readvalue);
-   if (retVal == NO_ERROR)
-   {
-      printf(" PWR_FAIL(%hhu)(%s)\r\n", readvalue, readvalue ? "ERROR" : "OK");
-   }
-   else
-   {
-      printf("Error %d getting PWR_FAIL\r\n", retVal);
-   }
-   return retVal;
-}
-
-static int EnableCan(void)
-{
-   int ReturnCode = 0;
-   char wValue;
-   char BufKey[16];
-
-   printf("Disable(0), Enable(1):");
-   getEntry(BufKey);
-   wValue = (unsigned char)atoi(BufKey);
-   if ((ReturnCode = (*FncDIGIO_Enable_Can)(wValue)) != NO_ERROR)
-   {
-      printf("ERROR(%d) %s CAN\n", ReturnCode, wValue ? "ENABLE" : "DISABLE");
-   }
-   else
-   {
-      printf("CAN %s OK\n", wValue ? "ENABLE" : "DISABLE");
-   }
-   return ReturnCode;
-}
-
-static int Set_SD_Card(void)
-{
-   int ReturnCode;
-   unsigned char value;
-   char BufKey[6];
-
-   printf("Enter 1/Enable, 0/Disable:");
-   getEntry(BufKey);
-   value = atoi(BufKey);
-
-   ReturnCode = (*FncDIGIO_Set_SD_Card)(value);
-   if (ReturnCode == NO_ERROR)
-   {
-      printf(" SD %s OK\r\n", value ? "Enabled" : "Disabled");
-   }
-   else
-   {
-      printf("Error %d setting SD Card\r\n", ReturnCode);
-   }
-   return ReturnCode;
-}
-
-static int Get_USB_A(void)
-{
-   int retVal;
-   unsigned char readvalue;
-
-   retVal = (*FncDIGIO_Get_USB_A)(&readvalue);
-   if (retVal == NO_ERROR)
-   {
-      printf(" USB_A(%hhu)(%s)\r\n", readvalue, readvalue ? "OK" : "ERROR");
-   }
-   else
-   {
-      printf("Error %d getting USB_A\r\n", retVal);
-   }
-   return retVal;
-}
-
-static int DiscoverOneWire(void)
-{
-   int ReturnCode;
-   OneWireTable_t *pDeviceList = NULL;
-   unsigned char ListSize, i;
-
-   ReturnCode = (*FncOW_Discover)(&pDeviceList, &ListSize);
-   if (ReturnCode == NO_ERROR)
-   {
-      printf("1-Wire discover OK\n");
-      printf("Devices(%hhu)\n", ListSize);
-      for (i = 0; i < ListSize; i++)
+      printf("Enter Destination Address (0...255):");
+      getEntry(BufKey);
+      DestAddr = atoi(BufKey);
+      printf("Enter Local Address (0...255):");
+      getEntry(BufKey);
+      MyAddr = atoi(BufKey);
+      CheckMsg[1] = DestAddr;
+      CheckMsg[3] = MyAddr;
+      written = write(FD_485, &CheckMsg[0], strlen(CheckMsg));
+      if (written != (int)strlen(CheckMsg))
       {
-         printf("Device (%hhu): (%s) %02hhX %02hhX %02hhX %02hhX %02hhX %02hhX %02hhX %02hhX\n", i, StatusDevice[pDeviceList->DeviceStatus],
-                pDeviceList[i].DeviceId.RomId[0], pDeviceList[i].DeviceId.RomId[1], pDeviceList[i].DeviceId.RomId[2],
-                pDeviceList[i].DeviceId.RomId[3], pDeviceList[i].DeviceId.RomId[4], pDeviceList[i].DeviceId.RomId[5],
-                pDeviceList[i].DeviceId.RomId[6], pDeviceList[i].DeviceId.RomId[7]);
+         printf("ERROR SENDING MESSAGE\r\n");
       }
-      if (pDeviceList != NULL)
+      else
       {
-         // free pointer
-         free(pDeviceList);
+         printf("SENT MESSAGE\r\n");
       }
-   }
-   else
-   {
-      printf("1-Wire discover ERROR(%d)\n", ReturnCode);
-   }
-   return ReturnCode;
-}
 
-static int UpdateOneWire(void)
-{
-   int ReturnCode;
-   unsigned char UpdateTime;
-   char Bufkey[1];
+      //   while(1) {
+      //      ioctl(FD_485, TIOCSERGETLSR, &aLSR);
+      //      if(aLSR & TIOCSER_TEMT)
+      //         break;
+      //   }
 
-   printf("Enter 1-Wire device list update time(1 - 50):");
-   getEntry(Bufkey);
-   UpdateTime = (unsigned char)atoi(Bufkey);
-   if ((ReturnCode = (*FncOW_SetUpdate)(OwUpdateInterruptHandler, UpdateTime)) != NO_ERROR)
-   {
-      printf("1-Wire interrupt handler ERROR (%d)\n", ReturnCode);
+      Rx_RS485(0);
+      return ReturnCode;
    }
-   else
-   {
-      printf("1-Wire interrupt handler set OK\n");
-   }
-   return ReturnCode;
-}
 
-// This is an example. Code inside must be as short and fast as possible, for example only to post a semaphore
-// and execute the interruption code in a different thread out of the handler
-void OwUpdateInterruptHandler(OneWireTable_t *pDevices, unsigned char wNumber, int wError)
-{
-   OneWireTable_t *pLocalDevice = pDevices;
-   unsigned char i;
+   static int OpenUart485(void)
+   {
+      int ReturnCode;
 
-   printf("OwUpdateInterruptHandler ENTER\r\n");
-   if (wError != NO_ERROR)
-   {
-      printf("ERROR(%d)\n", wError);
-   }
-   else
-   {
-      printf("NUM DEVICES(%hhu)\n", wNumber);
-      for (i = 0; i < wNumber; i++)
+      FD_485 = open(UART_RS485, O_RDWR | O_NOCTTY | O_NONBLOCK);
+      if (FD_485 < 0)
       {
-         printf("Device (%hhu):(%s) %02hhX %02hhX %02hhX %02hhX %02hhX %02hhX %02hhX %02hhX\n", i, StatusDevice[pLocalDevice->DeviceStatus],
-                pLocalDevice->DeviceId.RomId[0], pLocalDevice->DeviceId.RomId[1], pLocalDevice->DeviceId.RomId[2],
-                pLocalDevice->DeviceId.RomId[3], pLocalDevice->DeviceId.RomId[4], pLocalDevice->DeviceId.RomId[5],
-                pLocalDevice->DeviceId.RomId[6], pLocalDevice->DeviceId.RomId[7]);
-         pLocalDevice++;
+         printf("open %s error %s\n", UART_RS485, strerror(errno));
+         return -1;
+      }
+
+      ReturnCode = tcgetattr(FD_485, &oldtio);
+      if (ReturnCode < 0)
+      {
+         printf("tcgetattr error %s\n", strerror(errno));
+         close(FD_485);
+         FD_485 = -1;
+         return -1;
+      }
+
+      newtio = oldtio;
+      newtio.c_cflag |= B115200 | CS8 | CLOCAL | CREAD;
+      newtio.c_iflag = IGNPAR;
+      newtio.c_oflag = 0; // no output modes
+      newtio.c_lflag = 0; // no canonical, no echo, ...
+      newtio.c_cc[VMIN] = 0;
+      newtio.c_cc[VTIME] = 0;
+
+      ReturnCode = cfsetospeed(&newtio, B115200);
+      if (ReturnCode < 0)
+      {
+         printf("Could not set output speed!\n");
+         close(FD_485);
+         FD_485 = -1;
+         return -1;
+      }
+      ReturnCode = cfsetispeed(&newtio, B115200);
+      if (ReturnCode < 0)
+      {
+         printf("Could not set input speed!\n");
+         close(FD_485);
+         FD_485 = -1;
+         return -1;
+      }
+      tcflush(FD_485, TCIOFLUSH);
+      tcsetattr(FD_485, TCSANOW, &newtio);
+      printf(" %s configured succesfully.\n", UART_RS485);
+      return 0;
+   }
+
+   static int Set_Adc_Range(void)
+   {
+      int value, retVal;
+      unsigned char readvalue;
+      char BufKey[16];
+
+      printf("Enter ADC_RANGE number (0..3):");
+      getEntry(BufKey);
+      value = atoi(BufKey);
+      printf("Enter ADC_RANGE value (0..1):");
+      getEntry(BufKey);
+      readvalue = atoi(BufKey);
+      retVal = (*FncDIGIO_Set_ADC_RANGE)((unsigned char)value, readvalue);
+      if (retVal == NO_ERROR)
+      {
+         printf(" ADC%d_RANGE = %hhu", value, readvalue);
+      }
+      else
+      {
+         printf("Error %d setting ADC%d_RANGE\r\n", retVal, value);
+      }
+      return retVal;
+   }
+
+   static int Enable_RS485(void)
+   {
+      int ReturnCode;
+      unsigned char wValue;
+      char BufKey[16];
+
+      printf("Disable(0), Enable(1):");
+      getEntry(BufKey);
+      wValue = (unsigned char)atoi(BufKey);
+      ReturnCode = (*FncDIGIO_Enable_RS485)(wValue);
+      if (ReturnCode == NO_ERROR)
+      {
+         printf(" ENABLE RS485 OK\r\n");
+      }
+      else
+      {
+         printf("Error %d enabling RS485\r\n", ReturnCode);
+      }
+      return ReturnCode;
+   }
+
+   static int Enable_KLine(void)
+   {
+      int ReturnCode;
+      unsigned char wValue;
+      char BufKey[16];
+
+      printf("Disable(0), Enable(1):");
+      getEntry(BufKey);
+      wValue = (unsigned char)atoi(BufKey);
+      ReturnCode = (*FncDIGIO_Enable_KLINE)(wValue);
+      if (ReturnCode == NO_ERROR)
+      {
+         printf(" K-LINE %s OK\r\n", wValue ? "enabled" : "disabled");
+      }
+      else
+      {
+         printf("Error %d enabling K-LINE\r\n", ReturnCode);
+      }
+      return ReturnCode;
+   }
+
+   static int GetVin(void)
+   {
+      int ReturnCode = 0;
+      float ad_vin;
+
+      ReturnCode = (*FncRTUGetAD_V_IN)(&ad_vin);
+      if (ReturnCode)
+      {
+         printf("ERROR %d getting Vin analog input\n", ReturnCode);
+      }
+      else
+      {
+         printf("Vin level: %f\n", ad_vin);
+      }
+      return ReturnCode;
+   }
+
+   static int GetVbat(void)
+   {
+      int ReturnCode = 0;
+      float ad_vbat;
+
+      ReturnCode = (*FncRTUGetAD_VBAT_MAIN)(&ad_vbat);
+      if (ReturnCode)
+      {
+         printf("ERROR %d getting Vbat analog input\n", ReturnCode);
+      }
+      else
+      {
+         printf("Vbat level: %f\n", ad_vbat);
+      }
+      return ReturnCode;
+   }
+
+   static int GetTemp(void)
+   {
+      int ReturnCode = 0;
+      int temp;
+
+      ReturnCode = (*FncRTUGetAD_TEMP)(&temp);
+      if (ReturnCode)
+      {
+         printf("ERROR %d getting temperature\n", ReturnCode);
+      }
+      else
+      {
+         printf("Temperature: %d C\n", temp);
+      }
+      return ReturnCode;
+   }
+
+   void iButtonInterruptHandler(unsigned char *pData)
+   {
+      int i;
+
+      // This should not be done in a real app because it is a handler
+      // but it is only for showing and testing the funcitonality
+      printf("iButton (interrupt) detected with ID: ");
+
+      for (i = 0; i < IB_ID_LENGTH; i++)
+      {
+         printf("0x%hhX ", pData[i]);
       }
       printf("\n");
    }
-}
 
-static int ResetUpdateOneWire(void)
-{
-   int ReturnCode;
-
-   if ((ReturnCode = (*FncOW_ResetUpdate)()) != NO_ERROR)
+   static int Set_VOUT(void)
    {
-      printf("1-Wire interrupt handler reset ERROR (%d)\n", ReturnCode);
-   }
-   else
-   {
-      printf("1-Wire interrupt handler reset OK\n");
-   }
-   return ReturnCode;
-}
+      int ReturnCode;
+      unsigned char value;
+      char BufKey[6];
 
-static int Set_CAN_TX_Mode(char number)
-{
-   int ReturnCode = 0;
-   unsigned char wValue;
-   char BufKey[16];
+      printf("Enter 1/Enable, 0/Disable:");
+      getEntry(BufKey);
+      value = atoi(BufKey);
 
-   printf("Fast(0), Disable(1), Slow(2):");
-   getEntry(BufKey);
-   wValue = (unsigned char)atoi(BufKey);
-
-   switch (number)
-   {
-   case 1:
-      ReturnCode = (*FncDIGIO_Set_CAN1_TX_Mode)(wValue);
-      break;
-   case 2:
-      ReturnCode = (*FncDIGIO_Set_CAN2_TX_Mode)(wValue);
-      break;
-   case 3:
-      ReturnCode = (*FncDIGIO_Set_CAN3_TX_Mode)(wValue);
-      break;
-   case 4:
-      ReturnCode = (*FncDIGIO_Set_CAN4_TX_Mode)(wValue);
-      break;
-   default:
-      ReturnCode = -1;
-      break;
-   }
-
-   if (ReturnCode != NO_ERROR)
-   {
-      printf("ERROR(%d) SET CAN%dTX MODE\n", ReturnCode, number);
-   }
-   else
-   {
-      printf("SET CAN%dTX MODE %d OK\n", number, wValue);
-   }
-   return ReturnCode;
-}
-
-static int Switch_GPS(void)
-{
-   int ReturnCode = 0;
-   unsigned char wValue;
-   char BufKey[16];
-
-   printf("OFF(0), ON(1):");
-   getEntry(BufKey);
-   wValue = (unsigned char)atoi(BufKey);
-   if ((ReturnCode = (*FncDIGIO_Switch_GPS_ON_OFF)(wValue)) != NO_ERROR)
-   {
-      printf("ERROR(%d) %s GPS\n", ReturnCode, wValue ? "ENABLE" : "DISABLE");
-   }
-   else
-   {
-      printf("GPS %s OK\n", wValue ? "ENABLE" : "DISABLE");
-   }
-   return ReturnCode;
-}
-
-static int Set_KLINE1_Threshold(void)
-{
-   int ReturnCode = 0;
-   char wValue;
-   char BufKey[16];
-
-   printf("LOW(0), HIGH(1):");
-   getEntry(BufKey);
-   wValue = (unsigned char)atoi(BufKey);
-   if ((ReturnCode = (*FncDIGIO_Set_KLINE1_Threshold)(wValue)) != NO_ERROR)
-   {
-      printf("ERROR(%d) SETTING %s KLINE1 THRESHOLD\n", ReturnCode, wValue ? "HIGH" : "LOW");
-   }
-   else
-   {
-      printf("KLINE1 THRESHOLD %s OK\n", wValue ? "HIGH" : "LOW");
-   }
-   return ReturnCode;
-}
-
-static int Set_KLINE2_Threshold(void)
-{
-   int ReturnCode = 0;
-   char wValue;
-   char BufKey[16];
-
-   printf("LOW(0), HIGH(1):");
-   getEntry(BufKey);
-   wValue = (unsigned char)atoi(BufKey);
-   if ((ReturnCode = (*FncDIGIO_Set_KLINE2_Threshold)(wValue)) != NO_ERROR)
-   {
-      printf("ERROR(%d) SETTING %s KLINE2 THRESHOLD\n", ReturnCode, wValue ? "HIGH" : "LOW");
-   }
-   else
-   {
-      printf("KLINE2 THRESHOLD %s OK\n", wValue ? "HIGH" : "LOW");
-   }
-   return ReturnCode;
-}
-
-static int Get_Bat_Stat(void)
-{
-   int ReturnCode = 0;
-   unsigned char BattState = 0;
-
-   if ((ReturnCode = (*FncRTUGetBatteryState)(&BattState)) != NO_ERROR)
-   {
-      printf("ERROR %d getting battery state\n", ReturnCode);
-   }
-   else
-   {
-      printf("Battery state(%d)\n", BattState);
-      switch (BattState)
+      ReturnCode = (*FncDIGIO_Set_VOUT)(value);
+      if (ReturnCode == NO_ERROR)
       {
-      case 0:
-         printf("Precharge in progress\n");
-         break;
-      case 1:
-         printf("Charge done\n");
-         break;
-      case 2:
-         printf("Fast charge\n");
-         break;
-      case 3:
-         printf("Charge suspended\n");
-         break;
+         printf(" VOUT %s OK\r\n", value ? "Enabled" : "Disabled");
+      }
+      else
+      {
+         printf("Error %d setting VOUT\r\n", ReturnCode);
+      }
+      return ReturnCode;
+   }
+
+   static int Get_VOUT_STATUS(void)
+   {
+      int retVal;
+      unsigned char readvalue;
+
+      retVal = (*FncDIGIO_Get_VOUT_STATUS)(&readvalue);
+      if (retVal == NO_ERROR)
+      {
+         printf(" VOUT_STATUS(%hhu)(%s)\r\n", readvalue, readvalue ? "OK" : "ERROR");
+      }
+      else
+      {
+         printf("Error %d getting VOUT_STATUS\r\n", retVal);
+      }
+      return retVal;
+   }
+
+   static int Get_PWR_FAIL(void)
+   {
+      int retVal;
+      unsigned char readvalue;
+
+      retVal = (*FncDIGIO_Get_PWR_FAIL)(&readvalue);
+      if (retVal == NO_ERROR)
+      {
+         printf(" PWR_FAIL(%hhu)(%s)\r\n", readvalue, readvalue ? "ERROR" : "OK");
+      }
+      else
+      {
+         printf("Error %d getting PWR_FAIL\r\n", retVal);
+      }
+      return retVal;
+   }
+
+   static int EnableCan(void)
+   {
+      int ReturnCode = 0;
+      char wValue;
+      char BufKey[16];
+
+      printf("Disable(0), Enable(1):");
+      getEntry(BufKey);
+      wValue = (unsigned char)atoi(BufKey);
+      if ((ReturnCode = (*FncDIGIO_Enable_Can)(wValue)) != NO_ERROR)
+      {
+         printf("ERROR(%d) %s CAN\n", ReturnCode, wValue ? "ENABLE" : "DISABLE");
+      }
+      else
+      {
+         printf("CAN %s OK\n", wValue ? "ENABLE" : "DISABLE");
+      }
+      return ReturnCode;
+   }
+
+   static int Set_SD_Card(void)
+   {
+      int ReturnCode;
+      unsigned char value;
+      char BufKey[6];
+
+      printf("Enter 1/Enable, 0/Disable:");
+      getEntry(BufKey);
+      value = atoi(BufKey);
+
+      ReturnCode = (*FncDIGIO_Set_SD_Card)(value);
+      if (ReturnCode == NO_ERROR)
+      {
+         printf(" SD %s OK\r\n", value ? "Enabled" : "Disabled");
+      }
+      else
+      {
+         printf("Error %d setting SD Card\r\n", ReturnCode);
+      }
+      return ReturnCode;
+   }
+
+   static int Get_USB_A(void)
+   {
+      int retVal;
+      unsigned char readvalue;
+
+      retVal = (*FncDIGIO_Get_USB_A)(&readvalue);
+      if (retVal == NO_ERROR)
+      {
+         printf(" USB_A(%hhu)(%s)\r\n", readvalue, readvalue ? "OK" : "ERROR");
+      }
+      else
+      {
+         printf("Error %d getting USB_A\r\n", retVal);
+      }
+      return retVal;
+   }
+
+   static int DiscoverOneWire(void)
+   {
+      int ReturnCode;
+      OneWireTable_t *pDeviceList = NULL;
+      unsigned char ListSize, i;
+
+      ReturnCode = (*FncOW_Discover)(&pDeviceList, &ListSize);
+      if (ReturnCode == NO_ERROR)
+      {
+         printf("1-Wire discover OK\n");
+         printf("Devices(%hhu)\n", ListSize);
+         for (i = 0; i < ListSize; i++)
+         {
+            printf("Device (%hhu): (%s) %02hhX %02hhX %02hhX %02hhX %02hhX %02hhX %02hhX %02hhX\n", i, StatusDevice[pDeviceList->DeviceStatus],
+                   pDeviceList[i].DeviceId.RomId[0], pDeviceList[i].DeviceId.RomId[1], pDeviceList[i].DeviceId.RomId[2],
+                   pDeviceList[i].DeviceId.RomId[3], pDeviceList[i].DeviceId.RomId[4], pDeviceList[i].DeviceId.RomId[5],
+                   pDeviceList[i].DeviceId.RomId[6], pDeviceList[i].DeviceId.RomId[7]);
+         }
+         if (pDeviceList != NULL)
+         {
+            // free pointer
+            free(pDeviceList);
+         }
+      }
+      else
+      {
+         printf("1-Wire discover ERROR(%d)\n", ReturnCode);
+      }
+      return ReturnCode;
+   }
+
+   static int UpdateOneWire(void)
+   {
+      int ReturnCode;
+      unsigned char UpdateTime;
+      char Bufkey[1];
+
+      printf("Enter 1-Wire device list update time(1 - 50):");
+      getEntry(Bufkey);
+      UpdateTime = (unsigned char)atoi(Bufkey);
+      if ((ReturnCode = (*FncOW_SetUpdate)(OwUpdateInterruptHandler, UpdateTime)) != NO_ERROR)
+      {
+         printf("1-Wire interrupt handler ERROR (%d)\n", ReturnCode);
+      }
+      else
+      {
+         printf("1-Wire interrupt handler set OK\n");
+      }
+      return ReturnCode;
+   }
+
+   // This is an example. Code inside must be as short and fast as possible, for example only to post a semaphore
+   // and execute the interruption code in a different thread out of the handler
+   void OwUpdateInterruptHandler(OneWireTable_t * pDevices, unsigned char wNumber, int wError)
+   {
+      OneWireTable_t *pLocalDevice = pDevices;
+      unsigned char i;
+
+      printf("OwUpdateInterruptHandler ENTER\r\n");
+      if (wError != NO_ERROR)
+      {
+         printf("ERROR(%d)\n", wError);
+      }
+      else
+      {
+         printf("NUM DEVICES(%hhu)\n", wNumber);
+         for (i = 0; i < wNumber; i++)
+         {
+            printf("Device (%hhu):(%s) %02hhX %02hhX %02hhX %02hhX %02hhX %02hhX %02hhX %02hhX\n", i, StatusDevice[pLocalDevice->DeviceStatus],
+                   pLocalDevice->DeviceId.RomId[0], pLocalDevice->DeviceId.RomId[1], pLocalDevice->DeviceId.RomId[2],
+                   pLocalDevice->DeviceId.RomId[3], pLocalDevice->DeviceId.RomId[4], pLocalDevice->DeviceId.RomId[5],
+                   pLocalDevice->DeviceId.RomId[6], pLocalDevice->DeviceId.RomId[7]);
+            pLocalDevice++;
+         }
+         printf("\n");
       }
    }
 
-   return ReturnCode;
-}
-
-static int Get_Bat_Charge_Stat(void)
-{
-   int ReturnCode = 0;
-   unsigned char BattStatus;
-
-   ReturnCode = (*FncRTUGetBatteryChargeStatus)(&BattStatus);
-   if (ReturnCode != NO_ERROR)
+   static int ResetUpdateOneWire(void)
    {
-      printf("Reading Battery charge status error (%d)...\n", ReturnCode);
-   }
-   else
-   {
-      printf("Battery charge status is %s\n", BattStatus ? "ENABLED" : "DISABLED");
+      int ReturnCode;
+
+      if ((ReturnCode = (*FncOW_ResetUpdate)()) != NO_ERROR)
+      {
+         printf("1-Wire interrupt handler reset ERROR (%d)\n", ReturnCode);
+      }
+      else
+      {
+         printf("1-Wire interrupt handler reset OK\n");
+      }
+      return ReturnCode;
    }
 
-   return ReturnCode;
-}
-
-static int Set_Bat_Charge_Stat(void)
-{
-   int ReturnCode = 0;
-   unsigned char wEnable;
-   char BufKey[16];
-
-   printf("Disable charging(0), Enable charging(1):");
-   getEntry(BufKey);
-   wEnable = (unsigned char)atoi(BufKey);
-
-   ReturnCode = (*FncRTUSetBatteryChargeStatus)(wEnable);
-   if (ReturnCode != NO_ERROR)
+   static int Set_CAN_TX_Mode(char number)
    {
-      printf("Error (%d) %s Charge status...\n", ReturnCode, wEnable ? "ENABLING" : "DISABLING");
-   }
-   else
-   {
-      printf("Charge status %s OK...\n", wEnable ? "ENABLED" : "DISABLED");
+      int ReturnCode = 0;
+      unsigned char wValue;
+      char BufKey[16];
+
+      printf("Fast(0), Disable(1), Slow(2):");
+      getEntry(BufKey);
+      wValue = (unsigned char)atoi(BufKey);
+
+      switch (number)
+      {
+      case 1:
+         ReturnCode = (*FncDIGIO_Set_CAN1_TX_Mode)(wValue);
+         break;
+      case 2:
+         ReturnCode = (*FncDIGIO_Set_CAN2_TX_Mode)(wValue);
+         break;
+      case 3:
+         ReturnCode = (*FncDIGIO_Set_CAN3_TX_Mode)(wValue);
+         break;
+      case 4:
+         ReturnCode = (*FncDIGIO_Set_CAN4_TX_Mode)(wValue);
+         break;
+      default:
+         ReturnCode = -1;
+         break;
+      }
+
+      if (ReturnCode != NO_ERROR)
+      {
+         printf("ERROR(%d) SET CAN%dTX MODE\n", ReturnCode, number);
+      }
+      else
+      {
+         printf("SET CAN%dTX MODE %d OK\n", number, wValue);
+      }
+      return ReturnCode;
    }
 
-   return ReturnCode;
-}
+   static int Switch_GPS(void)
+   {
+      int ReturnCode = 0;
+      unsigned char wValue;
+      char BufKey[16];
+
+      printf("OFF(0), ON(1):");
+      getEntry(BufKey);
+      wValue = (unsigned char)atoi(BufKey);
+      if ((ReturnCode = (*FncDIGIO_Switch_GPS_ON_OFF)(wValue)) != NO_ERROR)
+      {
+         printf("ERROR(%d) %s GPS\n", ReturnCode, wValue ? "ENABLE" : "DISABLE");
+      }
+      else
+      {
+         printf("GPS %s OK\n", wValue ? "ENABLE" : "DISABLE");
+      }
+      return ReturnCode;
+   }
+
+   static int Set_KLINE1_Threshold(void)
+   {
+      int ReturnCode = 0;
+      char wValue;
+      char BufKey[16];
+
+      printf("LOW(0), HIGH(1):");
+      getEntry(BufKey);
+      wValue = (unsigned char)atoi(BufKey);
+      if ((ReturnCode = (*FncDIGIO_Set_KLINE1_Threshold)(wValue)) != NO_ERROR)
+      {
+         printf("ERROR(%d) SETTING %s KLINE1 THRESHOLD\n", ReturnCode, wValue ? "HIGH" : "LOW");
+      }
+      else
+      {
+         printf("KLINE1 THRESHOLD %s OK\n", wValue ? "HIGH" : "LOW");
+      }
+      return ReturnCode;
+   }
+
+   static int Set_KLINE2_Threshold(void)
+   {
+      int ReturnCode = 0;
+      char wValue;
+      char BufKey[16];
+
+      printf("LOW(0), HIGH(1):");
+      getEntry(BufKey);
+      wValue = (unsigned char)atoi(BufKey);
+      if ((ReturnCode = (*FncDIGIO_Set_KLINE2_Threshold)(wValue)) != NO_ERROR)
+      {
+         printf("ERROR(%d) SETTING %s KLINE2 THRESHOLD\n", ReturnCode, wValue ? "HIGH" : "LOW");
+      }
+      else
+      {
+         printf("KLINE2 THRESHOLD %s OK\n", wValue ? "HIGH" : "LOW");
+      }
+      return ReturnCode;
+   }
+
+   static int Get_Bat_Stat(void)
+   {
+      int ReturnCode = 0;
+      unsigned char BattState = 0;
+
+      if ((ReturnCode = (*FncRTUGetBatteryState)(&BattState)) != NO_ERROR)
+      {
+         printf("ERROR %d getting battery state\n", ReturnCode);
+      }
+      else
+      {
+         printf("Battery state(%d)\n", BattState);
+         switch (BattState)
+         {
+         case 0:
+            printf("Precharge in progress\n");
+            break;
+         case 1:
+            printf("Charge done\n");
+            break;
+         case 2:
+            printf("Fast charge\n");
+            break;
+         case 3:
+            printf("Charge suspended\n");
+            break;
+         }
+      }
+
+      return ReturnCode;
+   }
+
+   static int Get_Bat_Charge_Stat(void)
+   {
+      int ReturnCode = 0;
+      unsigned char BattStatus;
+
+      ReturnCode = (*FncRTUGetBatteryChargeStatus)(&BattStatus);
+      if (ReturnCode != NO_ERROR)
+      {
+         printf("Reading Battery charge status error (%d)...\n", ReturnCode);
+      }
+      else
+      {
+         printf("Battery charge status is %s\n", BattStatus ? "ENABLED" : "DISABLED");
+      }
+
+      return ReturnCode;
+   }
+
+   static int Set_Bat_Charge_Stat(void)
+   {
+      int ReturnCode = 0;
+      unsigned char wEnable;
+      char BufKey[16];
+
+      printf("Disable charging(0), Enable charging(1):");
+      getEntry(BufKey);
+      wEnable = (unsigned char)atoi(BufKey);
+
+      ReturnCode = (*FncRTUSetBatteryChargeStatus)(wEnable);
+      if (ReturnCode != NO_ERROR)
+      {
+         printf("Error (%d) %s Charge status...\n", ReturnCode, wEnable ? "ENABLING" : "DISABLING");
+      }
+      else
+      {
+         printf("Charge status %s OK...\n", wEnable ? "ENABLED" : "DISABLED");
+      }
+
+      return ReturnCode;
+   }
