@@ -576,7 +576,7 @@ int main(int argc, char *argv[])
    int outputNumber = atoi(argv[1]);
    int state = atoi(argv[2]);
 
-   if (outputNumber < 1 || outputNumber > 10 || (state != 0 && state != 1))
+   if (outputNumber < 0 || outputNumber > 9 || (state != 0 && state != 1))
    {
       printf("Invalid arguments!");
       return 1; // Return an error code
