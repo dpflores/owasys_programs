@@ -1021,7 +1021,8 @@ static int GetTemp( void)
   if( ReturnCode) {
     printf("ERROR %d getting temperature\n", ReturnCode);
   } else {
-    printf("Temperature: %d C\n", temp);
+    printf("%d", temp);
+    fflush(stdout);
   }
   return ReturnCode;
 }

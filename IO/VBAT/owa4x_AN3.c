@@ -1007,7 +1007,8 @@ static int GetVbat( void)
   if( ReturnCode) {
     printf("ERROR %d getting Vbat analog input\n", ReturnCode);
   } else {
-    printf("Vbat level: %f\n", ad_vbat);
+    printf("%f", ad_vbat);
+    fflush(stdout);
   }
   return ReturnCode;
 }
