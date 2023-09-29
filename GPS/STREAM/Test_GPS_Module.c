@@ -801,9 +801,6 @@ int main(int argc, char *argv[])
    // printf( " OWASYS -> Starting Test_GPS_Module %s (%s, %s)\n", APP_VERSION, __DATE__ , __TIME__);
    // stop gps
    
-   if( EndGPSModule() != NO_ERROR) {
-      WriteLog("Error %d in EndGPSModule()", ReturnCode);
-   }
 
    if (InitRTUModule() != NO_ERROR)
       exit(EXIT_FAILURE);
