@@ -440,15 +440,15 @@ int main( void )
    void  *LibRTUControlHandle = NULL;
 
 
-	printf("Enter owa3x_AN3 version(%s) program\r\n", SW_VERSION);
+	// printf("Enter owa3x_AN3 version(%s) program\r\n", SW_VERSION);
    LoadExternalLibrary((char *)LIBRTU, &LibRTUControlHandle);
    LoadRTUControlFunctions( LibRTUControlHandle);
-	printf("All external Control functions loaded\n");
+	// printf("All external Control functions loaded\n");
 
   	LoadExternalLibrary((char *)LIBIO, &LibIOHandle);
    LoadIOSFunctions(LibIOHandle);
 
-   printf("All external functions loaded...\n");
+   // printf("All external functions loaded...\n");
    if( (ReturnCode = (*FncRTUControl_Initialize)(NULL)) != NO_ERROR) {
       printf("Error %d in RTUControl_Initialize()...\n", ReturnCode);
       UnloadExternalLibrary(LibRTUControlHandle);

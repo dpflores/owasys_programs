@@ -98,7 +98,7 @@ int UnloadExternalLibrary( void *wLibHandle )
       WriteLog("UnloadExternalLibrary() error");
 		exit(1);
 	}
-   WriteLog("UnloadExternalLibrary() ok");
+   // WriteLog("UnloadExternalLibrary() ok");
 	return 0;
 }
 
