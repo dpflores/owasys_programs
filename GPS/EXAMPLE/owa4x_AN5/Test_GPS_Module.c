@@ -51,10 +51,6 @@
 
 #include "owa4x/owerrors.h"
 
-// To use time library of C
-#include <time.h>
-
-#include <stdlib.h>
 //-----------------------------------------------------------------//
 //Defines
 //-----------------------------------------------------------------//
@@ -103,18 +99,6 @@ FILE *logfd = NULL;
 
 /* functions definition */
 
-void delay(int number_of_seconds)
-{
-    // Converting time into milli_seconds
-    int milli_seconds = 1000 * number_of_seconds;
- 
-    // Storing start time
-    clock_t start_time = clock();
- 
-    // looping till required time is not achieved
-    while (clock() < start_time + milli_seconds);
-}
-
 //-----------------------------------------------------------------//
 // Function: GetGPSPosition()
 // Input Params:  -
@@ -123,8 +107,6 @@ void delay(int number_of_seconds)
 //    Calls to the gps library function to get the gps position.
 //    If position fix is not valid the corresponding tag is set to FALSE.
 //-----------------------------------------------------------------//
-
-
 void GetGPSPosition( void )
 {
 	int   ReturnCode = 0;
@@ -151,7 +133,7 @@ void GetFullGPSPosition( void )
 {
 	int   ReturnCode = 0;
 	tPOSITION_DATA LocalCoords;
-	static int NumOld = 0;
+	static int x=0, NumOld = 0;
 
    ReturnCode = GPS_GetAllPositionData( &LocalCoords );
    if( ReturnCode != NO_ERROR )
@@ -160,12 +142,26 @@ void GetFullGPSPosition( void )
 		if( LocalCoords.OldValue != 0){
 			NumOld++;
 		}
-		printf("{\"pos_valid\": %hhu, \"old_pos\": %hhu, \"total\": %d, \"nav_status\": \"%s\", \"lat\": %.7lf, \"lon\": %.7lf, \"alt\": %4.03f, \"hAcc\": %4.01f, \"vAcc\": %4.01f, \"Speed\": %4.03f, \"Course\": %4.02f, \"HDOP\": %4.03f, \"VDOP\": %4.01f, \"TDOP\": %4.01f, \"numSvs\": %hhu}",
-            LocalCoords.PosValid, LocalCoords.OldValue, NumOld, LocalCoords.NavStatus, LocalCoords.LatDecimal, LocalCoords.LonDecimal,
-             LocalCoords.Altitude, LocalCoords.HorizAccu, LocalCoords.VertiAccu, LocalCoords.Speed,LocalCoords.Course, LocalCoords.HDOP,
-             LocalCoords.VDOP, LocalCoords.TDOP, LocalCoords.numSvs);
-      fflush(stdout); // Asegurar que se envía el contenido al buffer de salida
-	
+		x++;
+		printf("CYCLES(%d)PosValid(%hhu)OLD POS(%hhu)TOTAL(%d),NAV STATUS(%s)\r\n", 
+             x, LocalCoords.PosValid, LocalCoords.OldValue, NumOld, LocalCoords.NavStatus);
+/*		printf("LATITUDE  --> %02d degrees %02d minutes %04.04f seconds %c (%lf)\r\n",
+				LocalCoords.Latitude.Degrees, LocalCoords.Latitude.Minutes,
+				LocalCoords.Latitude.Seconds, LocalCoords.Latitude.Dir, LocalCoords.LatDecimal);
+		printf("LONGITUDE --> %03d degrees %02d minutes %04.04f seconds %c (%lf)\r\n",
+				LocalCoords.Longitude.Degrees, LocalCoords.Longitude.Minutes,
+				LocalCoords.Longitude.Seconds, LocalCoords.Longitude.Dir, LocalCoords.LonDecimal);*/
+		printf("LATITUDE  --> %02hu degrees %02hhu minutes %04.04f seconds %c (%.7lf)\r\n",
+				LocalCoords.Latitude.Degrees, LocalCoords.Latitude.Minutes,
+				LocalCoords.Latitude.Seconds, LocalCoords.Latitude.Dir, LocalCoords.LatDecimal);
+		printf("LONGITUDE --> %03hu degrees %02hhu minutes %04.04f seconds %c (%.7lf)\r\n",
+				LocalCoords.Longitude.Degrees, LocalCoords.Longitude.Minutes,
+				LocalCoords.Longitude.Seconds, LocalCoords.Longitude.Dir, LocalCoords.LonDecimal);
+		printf("ALTITUDE(%04.03f),hAcc(%04.01f), vAcc(%04.01f), Speed(%04.03f), Course(%04.02f)\r\n", 
+			 LocalCoords.Altitude, LocalCoords.HorizAccu, LocalCoords.VertiAccu, LocalCoords.Speed,
+			 LocalCoords.Course );
+		printf("HDOP(%04.03f),VDOP(%04.01f), TDOP(%04.01f), numSvs(%hhu)\r\n", 
+			 LocalCoords.HDOP, LocalCoords.VDOP, LocalCoords.TDOP, LocalCoords.numSvs );
 	}
 }
 
@@ -722,11 +718,17 @@ void SetANA( void )
 void SetMeasRate( void )
 {
    int   ReturnCode = 0;
-   char  rate = 2;
+   char  rate = 0;
+   char  strEntry[255];
+
+   printf( "Measurement rate ( 1, 2, 4) >> ");
+   memset( ( void *) &strEntry, 0, sizeof( strEntry));
+   getEntry( strEntry);
+   rate = atoi( strEntry);
    if( (ReturnCode = GPS_SetMeasurementRate(rate)) != NO_ERROR) {
       printf( "Error %d in Set Rate()...\n", ReturnCode);
    } else {
-      // printf( "Set Rate OK\n");
+      printf( "Set Rate OK\n");
    }
 }
 
@@ -786,7 +788,146 @@ void GetModel( void )
    }  
 }
 
+//-----------------------------------------------------------------//
+// Function: handleKeys()
+// Input Params:
+//               buffer with the entered chars.
+// Output Params:
+//               0 - success
+//              -1 - error
+// Description:
+//    Checks if the entered characters fit with one the possible
+//    commands.
+//-----------------------------------------------------------------//
+int handleKeys( char* buffer )
+{
+   int   retVal=0, index;
 
+   for (index=0; buffer[index] != '\0'; index++) {
+      if (buffer[ index] > '1') {
+         buffer[index] = tolower( buffer[index]);
+      }
+   }
+   if( strncmp(buffer, CMD_GET_FULL_POSITION, strlen(CMD_GET_FULL_POSITION)) == 0) {
+      GetFullGPSPosition();
+   } else if( strncmp(buffer, CMD_GET_POSITION, strlen(CMD_GET_POSITION)) == 0) {
+      GetGPSPosition();
+   }
+   else if( strncmp(buffer, CMD_GET_SPEED, strlen(CMD_GET_SPEED)) == 0) {
+      GetGPSSpeed();
+   }
+   else if( strncmp(buffer, CMD_GET_ANTENNA, strlen(CMD_GET_ANTENNA)) == 0) {
+      GetAntennaStatus();
+   }
+   else if( strncmp(buffer, CMD_GET_JAMMING, strlen(CMD_GET_JAMMING)) == 0) {
+      GetStatusJamming();
+   }
+   else if( strncmp(buffer, CMD_GET_VERSION, strlen(CMD_GET_VERSION)) == 0) {
+      GetSwVersion();
+   }
+   else if( strncmp(buffer, CMD_GET_UTC, strlen(CMD_GET_UTC)) == 0) {
+      GetUTCDateTime();
+   }
+   else if( strncmp(buffer, CMD_GET_DOP, strlen(CMD_GET_DOP)) == 0) {
+      GetDOP_FixMode();
+   }
+   else if( strncmp(buffer, CMD_GET_SV_VIEW, strlen(CMD_GET_SV_VIEW)) == 0) {
+      GetSV_inView();
+   }
+   else if( strncmp(buffer, CMD_GET_ECEF, strlen(CMD_GET_ECEF)) == 0) {
+      GetECEFCoordinates();
+   }
+   else if( strncmp(buffer, CMD_GET_GEODETIC, strlen(CMD_GET_GEODETIC)) == 0) {
+      GetGeodeticCoordinates();
+   }
+   else if( strncmp(buffer, CMD_SET_ADQUISITION_MODE, strlen(CMD_SET_ADQUISITION_MODE)) == 0) {
+      SetAdquisitionMode();
+   }
+   else if( strncmp(buffer, CMD_SET_DYNAMIC_MODEL, strlen(CMD_SET_DYNAMIC_MODEL)) == 0) {
+      SetDynamicModel();
+   }
+   else if( strncmp(buffer, CMD_SET_STATIC_THRESH, strlen(CMD_SET_STATIC_THRESH)) == 0) {
+      SetStaticThreshold();
+   }
+   else if( strncmp(buffer, CMD_GPS_FINALIZE, strlen(CMD_GPS_FINALIZE)) == 0) {
+      retVal = EndGPSModule();
+   }
+   else if( strncmp(buffer, CMD_GPS_START, strlen(CMD_GPS_START)) == 0) {
+      retVal = InitGPSModule();
+   }
+   else if( strncmp(buffer, CMD_SET_ITFM_MODE, strlen(CMD_SET_ITFM_MODE)) == 0) {
+      EnableITFMMode();
+   }
+   else if( strncmp(buffer, CMD_SEND_DGPS, strlen(CMD_SEND_DGPS)) == 0) {
+      SendDGPSMsg();
+   }
+   else if( strncmp(buffer, CMD_GET_NAV_CONFIG, strlen(CMD_GET_NAV_CONFIG)) == 0) {
+      GetNAVConfiguration();
+   }
+   else if( strncmp(buffer, CMD_SET_NAV_CONFIG, strlen(CMD_SET_NAV_CONFIG)) == 0) {
+      SetNAVConfiguration();
+   }
+   else if( strncmp(buffer, CMD_GET_NAVX5, strlen(CMD_GET_NAVX5)) == 0) {
+      GetNavx5();
+   }
+   else if( strncmp(buffer, CMD_SET_ANA, strlen(CMD_SET_ANA)) == 0) {
+      SetANA();
+   }
+   else if( strncmp(buffer, CMD_CFG_FIX, strlen(CMD_CFG_FIX)) == 0) {
+      SetFixConfiguration();
+   }
+   else if( strncmp(buffer, CMD_GET_FIX, strlen(CMD_GET_FIX)) == 0) {
+      GetFixConfiguration();
+   }
+   else if( strncmp(buffer, CMD_GET_MODEL, strlen(CMD_GET_MODEL)) == 0) {
+      GetModel();
+   }
+   else if( strncmp(buffer, CMD_SET_RATE, strlen(CMD_SET_RATE)) == 0) {
+      SetMeasRate();
+   }
+   else if( strncmp(buffer, CMD_GET_RATE, strlen(CMD_GET_RATE)) == 0) {
+      GetMeasRate();
+   }
+   else if( strncmp(buffer, CMD_GET_NAV_SOL, strlen(CMD_GET_NAV_SOL)) == 0) {
+      Get_NavSol();
+   }
+   else if( strncmp(buffer, CMD_GPS_LED, strlen(CMD_GPS_LED)) == 0) {
+      SetGpsLed();
+   }
+   else if( strncmp(buffer, CMD_LIB_VER, strlen(CMD_LIB_VER)) == 0) {
+      GetLibVersion();
+   }
+	if( strncmp(buffer, CMD_QUIT, strlen(CMD_QUIT)) == 0) {
+      return -1;
+   }
+   return retVal;
+}
+
+//-----------------------------------------------------------------//
+// Function: printHelp()
+// Input Params:  -
+// Output Params: -
+// Description:
+//    Prints menu of options.
+//-----------------------------------------------------------------//
+void printHelp( void )
+{
+
+   printf("  -------------------------------------------------------------------------\n");
+   printf(" |   get fullpos                  |   get geo            |   get fix       |\n");
+   printf(" |   get speed                    |   set adq mode       |   set fix       |\n");
+   printf(" |   get antenna                  |   set dynamic        |   get model     |\n");
+   printf(" |   get sw ver                   |   set static         |   gps led       |\n");
+   printf(" |   get date                     |   gps end            |   set m_rate    |\n");
+   printf(" |   get dop                      |   gps start          |   get m_rate    |\n");
+   printf(" |   get sv view                  |   get nav config     |   get nav sol   |\n");
+   printf(" |   set jamming                  |   set nav config     |   get fullpos   |\n");
+   printf(" |   get jamming                  |   send dgps          |   quit          |\n");
+   printf(" |   get navx5                    |   get ecef           |                 |\n");
+   printf(" |   set ana                      |   lib ver            |                 |\n");
+   printf(" --------------------------------------------------------------------------\n");
+
+}
 
 //-----------------------------------------------------------------//
 // Function: main()
@@ -797,8 +938,10 @@ void GetModel( void )
 int main(int argc, char *argv[])
 {
 	int  					ReturnCode = 0;
+	BOOL              terminate=FALSE;
+   char              keyEntry[255];
 
-   // printf( " OWASYS -> Starting Test_GPS_Module %s (%s, %s)\n", APP_VERSION, __DATE__ , __TIME__);
+   printf( " OWASYS -> Starting Test_GPS_Module %s (%s, %s)\n", APP_VERSION, __DATE__ , __TIME__);
 
    if (InitRTUModule() != NO_ERROR)
       exit(EXIT_FAILURE);
@@ -809,18 +952,23 @@ int main(int argc, char *argv[])
    if (InitGPSModule() != NO_ERROR)
       exit(EXIT_FAILURE);
    
-
-   SetGpsLed();
-   SetMeasRate();
-
-   
-   while(1) {
-      delay(500);
-      GetFullGPSPosition();
-      
+   printHelp();
+   while(!terminate) {
+      printf("\n>>");
+      tcflush(fileno (stdin), TCIFLUSH); 
+      getEntry(keyEntry);
+      if( keyEntry[0] != '\0') {
+         //Handling commands
+         if (handleKeys(keyEntry) != NO_ERROR)
+            terminate = TRUE;
+         else {
+            printHelp();
+            keyEntry[0] = '\0';
+         }
+      }
    }
 
-
+   FinalizeApplication = TRUE;
    if( EndGPSModule() != NO_ERROR) {
       WriteLog("Error %d in EndGPSModule()", ReturnCode);
    }
@@ -957,10 +1105,26 @@ time_t GetCurTime( time_t *p )
 
 void SetGpsLed( void)
 {
+   char strEntry[ 6];
+   int retVal;
+   unsigned char mode;
 
-   GPS_Set_Led_Mode(0);
-   // printf(" Set led to GPS mode");
-   
+   memset( strEntry, 0, 6);
+   printf( "\n");
+   printf( "OWASYS--> GPS(0), User(1):");
+   getEntry( strEntry);
+   if( strEntry[ 0] == '1'){
+      retVal = GPS_Set_Led_Mode(1);
+      mode = 1 ;
+   } else {
+      retVal = GPS_Set_Led_Mode(0);
+      mode = 0;
+   }
+   if( retVal) {
+      printf("ERROR %d Set LED to %s\r\n", retVal, mode ? "USER" : "GPS");
+   } else {
+      printf(" Set led to %s  OK\r\n", mode ? "USER" : "GPS");
+   }
 }
 
 void GetLibVersion( void)
