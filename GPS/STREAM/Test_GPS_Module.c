@@ -429,20 +429,27 @@ void GetGeodeticCoordinates( void )
 // Description:
 //    Calls to the gps library function to set the gps adquisition mode.
 //-----------------------------------------------------------------//
-void SetAdquisitionMode( void )
+// void SetAdquisitionMode( void )
+// {
+// 	int  ReturnCode = 0;
+//    char gpsmode;
+//    char strEntry[255];
+
+//    printf( "GPS mode (0=normal,1=fast,2=high) >> ");
+//    memset( ( void *) &strEntry, 0, sizeof( strEntry));
+//    getEntry( strEntry);
+// 	gpsmode = atoi( strEntry);
+// 	if( (ReturnCode = GPS_SetGpsMode(gpsmode)) != NO_ERROR){
+// 	   RES_( printf( "Error %d in GPS_SetGpsMode()...\n", ReturnCode);)
+//    } else {
+//       RES_( printf( "GPS_SetGpsMode() OK\n");)
+//    }
+// }
+void SetAdquisitionMode( int gpsmode )
 {
 	int  ReturnCode = 0;
-   char gpsmode;
-   char strEntry[255];
-
-   printf( "GPS mode (0=normal,1=fast,2=high) >> ");
-   memset( ( void *) &strEntry, 0, sizeof( strEntry));
-   getEntry( strEntry);
-	gpsmode = atoi( strEntry);
 	if( (ReturnCode = GPS_SetGpsMode(gpsmode)) != NO_ERROR){
 	   RES_( printf( "Error %d in GPS_SetGpsMode()...\n", ReturnCode);)
-   } else {
-      RES_( printf( "GPS_SetGpsMode() OK\n");)
    }
 }
 
@@ -814,6 +821,8 @@ int main(int argc, char *argv[])
 
    SetGpsLed();
    SetMeasRate();
+   // Fast adquisition mode
+   SetAdquisitionMode(2);
 
    
    while(1) {
