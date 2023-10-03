@@ -445,8 +445,9 @@ void GetGeodeticCoordinates( void )
 //       RES_( printf( "GPS_SetGpsMode() OK\n");)
 //    }
 // }
-void SetAdquisitionMode( int gpsmode )
+void SetAdquisitionMode( void )
 {
+   int gpsmode = 2;
 	int  ReturnCode = 0;
 	if( (ReturnCode = GPS_SetGpsMode(gpsmode)) != NO_ERROR){
 	   RES_( printf( "Error %d in GPS_SetGpsMode()...\n", ReturnCode);)
@@ -822,7 +823,7 @@ int main(int argc, char *argv[])
    SetGpsLed();
    SetMeasRate();
    // Fast adquisition mode
-   SetAdquisitionMode(2);
+   SetAdquisitionMode();
 
    
    while(1) {
