@@ -827,9 +827,9 @@ int main(int argc, char *argv[])
 
    
    while(1) {
-      ;
-      // delay(500);
-      // GetFullGPSPosition();
+
+      delay(1000);
+      GetFullGPSPosition();
       
    }
 
