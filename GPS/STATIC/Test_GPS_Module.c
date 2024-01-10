@@ -447,6 +447,7 @@ void GetGeodeticCoordinates( void )
 // }
 void SetAdquisitionMode( void )
 {
+   // GpsMode	0: Normal, 1: Fast Acquisition, 2: High Sensitivity (Default value) 
    int gpsmode = 1;
 	int  ReturnCode = 0;
 	if( (ReturnCode = GPS_SetGpsMode(gpsmode)) != NO_ERROR){
@@ -826,11 +827,11 @@ int main(int argc, char *argv[])
    SetAdquisitionMode();
 
    
-   while(1) {
+   // while(1) {
       // delay(500);
-      // GetFullGPSPosition();
+      GetFullGPSPosition();
       
-   }
+   // }
 
 
    if( EndGPSModule() != NO_ERROR) {
