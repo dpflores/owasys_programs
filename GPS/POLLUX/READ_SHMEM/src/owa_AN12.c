@@ -33,13 +33,13 @@
 #include <errno.h>
 #include <time.h>
 
-#include <owasys/pollux/shmap.h>
-#include <owasys/pollux/type-defs.h>
+#include "owasys/shmap.h"
+#include "owasys/type-defs.h"
 
 //-----------------------------------------------------------------//
 //User Includes
 //-----------------------------------------------------------------//
-#include "owa_AN12.h"
+#include "owasys/owa_AN12.h"
 
 //-----------------------------------------------------------------//
 //Defines
