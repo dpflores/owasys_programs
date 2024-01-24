@@ -53,8 +53,8 @@ extern "C" {
    #define TRUE     (!FALSE)
    #endif
 #else
-   #include <owasys/owcomdefs.h>
-   #include <owasys/owerrors.h>
+   #include "owcomdefs.h"
+   #include "owerrors.h"
    #include <stdbool.h>
    #include <stdint.h>
    #ifndef BOOL
